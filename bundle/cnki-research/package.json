@@ -1,0 +1,13 @@
+{
+  "name": "@local/dsh-cnki-research",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CNKI Research agent preset for DSH Desktop: a preset-scoped stdio MCP client for a local cnki-mcp server, plus the CNKI literature-search skill. Portable build: no absolute paths, no preconfigured institution.",
+  "license": "GPL-3.0-only",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

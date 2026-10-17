@@ -1,0 +1,27 @@
+[
+    {
+        "path":  "cordis.patch.yml",
+        "bytes":  10984,
+        "sha256":  "e423a3fffa9215f29d5ebfec605e6bc3ed8182dfbf36aadcd682fb8a7f03e551"
+    },
+    {
+        "path":  "launcher/cnki_research_launcher.py",
+        "bytes":  10679,
+        "sha256":  "e87e3f58b1d6753f292e28ba0e0593d44c0b0650ccf5a06449efbbf924876108"
+    },
+    {
+        "path":  "package.json",
+        "bytes":  343,
+        "sha256":  "3c37bc42ea650a315c0fd38d3da08f7de3f62a655341386d4321dc9901b43b4f"
+    },
+    {
+        "path":  "README.md",
+        "bytes":  3332,
+        "sha256":  "59a0344d1e7f6013d090ac26491a4f762e51b35d4836fab1c4241d893861c31f"
+    },
+    {
+        "path":  "skills/cnki-literature-search/SKILL.md",
+        "bytes":  6645,
+        "sha256":  "bfb8b3f8606018685210cc92097363aae1c916e24cdc41d40c1e63d3f81b126b"
+    }
+]

@@ -1,0 +1,77 @@
+# ---------------------------------------------------------------------------
+# CNKI Research Portable — things that must never enter this repository
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Lock files — MUST be committed
+# ---------------------------------------------------------------------------
+# upstream/cnki-mcp/.gitignore (vendored verbatim from upstream, line 101) ignores
+# `uv.lock`. We need it: it is the only authoritative pin for every transitive
+# dependency, `uv sync --frozen` fails without it, and the installer requires it.
+# A nested .gitignore always wins over this file, so it is force-added instead:
+#     git add -f upstream/cnki-mcp/uv.lock
+# If you ever re-clone or re-add files, re-run that command and confirm with:
+#     git ls-files upstream/cnki-mcp/uv.lock
+
+# ---------------------------------------------------------------------------
+# Runtime state written by `tools/portable.ps1 -Action install`. It records THIS
+# machine's resolved interpreter path and the local CNKI profile name, so it must
+# never be committed or shipped.
+bundle/cnki-research/portable.runtime.json
+
+# Installer bookkeeping: install-state.json, backups/<timestamp>/ and pnpm logs.
+_portable/
+
+# Test output. `tests/run_all.ps1` writes raw evidence here; it contains absolute
+# paths and live runtime state from whichever machine ran the tests.
+docs/test-evidence/
+
+# Release archives. Build them; attach them to a GitHub Release. Never commit them.
+dist/
+
+# Developer recon and probe scratch space.
+_scratch/
+
+# ---------------------------------------------------------------------------
+# Python / Node runtime artefacts
+# ---------------------------------------------------------------------------
+.venv/
+venv/
+env/
+node_modules/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+build/
+*.log
+
+# ---------------------------------------------------------------------------
+# Credentials and personal data — these must never be committed
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+.credentials.yaml
+.anonymous-user-id
+cookies.json
+storage_state.json
+*storage_state*
+*.pem
+*.key
+*.pfx
+*.p12
+*.jks
+
+# ---------------------------------------------------------------------------
+# OS / editor noise
+# ---------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*~

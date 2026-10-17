@@ -1,0 +1,317 @@
+[
+    {
+        "path":  "src/cnki_mcp/__init__.py",
+        "bytes":  398,
+        "sha256":  "ed71390446c9ed2634faaa3d53e96a5b42d6287ed1f28fb4c039afdb358a85f1"
+    },
+    {
+        "path":  "src/cnki_mcp/api/__init__.py",
+        "bytes":  239,
+        "sha256":  "01a58e412e9962d40659078185591608c373f0753d6b1cbc6fbfdb0895ae7f62"
+    },
+    {
+        "path":  "src/cnki_mcp/cli/__init__.py",
+        "bytes":  295,
+        "sha256":  "69d8784c1b253e67a64a595a2f6ef2aec020c1e107704ddefbb07c9557bc7d54"
+    },
+    {
+        "path":  "src/cnki_mcp/cli/main.py",
+        "bytes":  13646,
+        "sha256":  "1582fc3abcbf44e5b8872c13e8c63abda363a0cf6d3c353bf19bea61ed0b8c72"
+    },
+    {
+        "path":  "src/cnki_mcp/core/__init__.py",
+        "bytes":  294,
+        "sha256":  "1c2b0ed80a5e2822469cf86884dcf79007ea9590a29963eddab6ed68a7ac3e77"
+    },
+    {
+        "path":  "src/cnki_mcp/core/auth.py",
+        "bytes":  12287,
+        "sha256":  "3d85cce30b31e27361d705a00cc0eab871343a7a2743e85139070f458674962a"
+    },
+    {
+        "path":  "src/cnki_mcp/core/browser_worker.py",
+        "bytes":  5488,
+        "sha256":  "37a8fe5c2cddfe6c9b00e225cad8fd19d7b1e1143427d5b549a80437602db284"
+    },
+    {
+        "path":  "src/cnki_mcp/core/client.py",
+        "bytes":  7107,
+        "sha256":  "d22dbcc6d4daf897c49a5beb0612ec4355e7be26e36dbb379ab9e7630ffc719b"
+    },
+    {
+        "path":  "src/cnki_mcp/core/config.py",
+        "bytes":  4254,
+        "sha256":  "a4b798fb8cc6d1a379ce8aacf773485ac88de8ef31262218af119a352eb07c5a"
+    },
+    {
+        "path":  "src/cnki_mcp/core/exceptions.py",
+        "bytes":  1796,
+        "sha256":  "a751291fbd011807690eb21f5520cdda4a1ccf14a59a419a359db678f87b6c32"
+    },
+    {
+        "path":  "src/cnki_mcp/core/models.py",
+        "bytes":  3588,
+        "sha256":  "35f18684ebd79ea648bcec3502fce6c7c2c0c7b1f824b7860350fea94c1069b7"
+    },
+    {
+        "path":  "src/cnki_mcp/core/parsers/__init__.py",
+        "bytes":  266,
+        "sha256":  "34e3fceb83b43ddb88bc04d2cf8ee8855c0e125e4fa3b11c54bfc91d536d8201"
+    },
+    {
+        "path":  "src/cnki_mcp/core/parsers/detail_parser.py",
+        "bytes":  11076,
+        "sha256":  "54fe99ba1e00d6ba203588acc6122a2c6aee8729e1a6349d6d3ee2bafbf0aad3"
+    },
+    {
+        "path":  "src/cnki_mcp/core/parsers/export_parser.py",
+        "bytes":  5263,
+        "sha256":  "f881dfe771977a910884c5ca957720daa12b2500db84d546c70c53c44934ed5d"
+    },
+    {
+        "path":  "src/cnki_mcp/core/parsers/journal_parser.py",
+        "bytes":  4776,
+        "sha256":  "9e2e8c64658903205c2fac8ac7273a084278f5df6ad0c6221e7f82a5338ef490"
+    },
+    {
+        "path":  "src/cnki_mcp/core/parsers/search_parser.py",
+        "bytes":  9495,
+        "sha256":  "2c81cbe8698ee1f0e759a9d8151e31f28857a88dc8e935a756fe417a6b419970"
+    },
+    {
+        "path":  "src/cnki_mcp/core/ratelimit.py",
+        "bytes":  4326,
+        "sha256":  "bd0e64bc2c3270d1b6525b1054a81ae1f3e718ae3d9e386c770f7df49bc9bb8a"
+    },
+    {
+        "path":  "src/cnki_mcp/core/retrieval/__init__.py",
+        "bytes":  494,
+        "sha256":  "21e659933203e7e6d973b9504c0a2ee881d9459e65d554bfe12c1adf553eec18"
+    },
+    {
+        "path":  "src/cnki_mcp/core/retrieval/base.py",
+        "bytes":  1479,
+        "sha256":  "69d27a8c54146584e3e7218678c7fbd676e6d5e6e9937cc5353603846a2d0e80"
+    },
+    {
+        "path":  "src/cnki_mcp/core/retrieval/models.py",
+        "bytes":  1629,
+        "sha256":  "810de7e49fe7e15cf2ccda036b6cebb9fb52fc0f568d3431d8460e729ca7748c"
+    },
+    {
+        "path":  "src/cnki_mcp/core/runtime.py",
+        "bytes":  3583,
+        "sha256":  "13ede24009990dec5e104689ffddc2acb377226efcba4eee3d7df33137622810"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/__init__.py",
+        "bytes":  281,
+        "sha256":  "e2ac6a5f99c593ac28b6522266b66674a50a991995edfd08346d34048f2cc450"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/basic_search.py",
+        "bytes":  6891,
+        "sha256":  "2a480265f4e41fede855bd7a66f6160e68c07578fcbdf4ebcf0b9653ef7d4dad"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/export.py",
+        "bytes":  3790,
+        "sha256":  "1da221d61b7930c261fe13de43c07e4bd79cbac358e2abfab8976a1c72d9a818"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/journal.py",
+        "bytes":  12985,
+        "sha256":  "8c8c3947ee0b06a99f7cd5f314f2ee76174e333cee75e04bfa2067ec8e027452"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/metadata.py",
+        "bytes":  3042,
+        "sha256":  "b8fed3ce28f9152cb0d2dae3932bf10bb3b24e6c3359346471dc3952a9692971"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/metadata_lookup.py",
+        "bytes":  9008,
+        "sha256":  "6a0f771bf0dce36ddef2cfe09b5630c4ac1831798043a2d075d22e0a5d6ac8c7"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/no-download-now.py",
+        "bytes":  278,
+        "sha256":  "4309acb60a45c56b95cb992929226cae51eb85e71d39f8b3c58e0f64df0db2fe"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/professional_search.py",
+        "bytes":  23592,
+        "sha256":  "22ebef17c1a621bbedb32aca3228a9c4691f7663f5c5f94f5f3e7acd96d938a8"
+    },
+    {
+        "path":  "src/cnki_mcp/core/tools/search.py",
+        "bytes":  8637,
+        "sha256":  "40218451a09c5b2d5250f98645ed8f83bd07d22f5c78bd5a7ac8c60668184dc2"
+    },
+    {
+        "path":  "src/cnki_mcp/server/__init__.py",
+        "bytes":  318,
+        "sha256":  "fc3f90a3e780abba679d28e324791304a1a15571e9158543260c35369a3e154e"
+    },
+    {
+        "path":  "src/cnki_mcp/server/__main__.py",
+        "bytes":  364,
+        "sha256":  "05cd46f2e460ac111b8fc0a139860bcacd2d8373046371d0140e9fb9ed4764e4"
+    },
+    {
+        "path":  "src/cnki_mcp/server/cnki_mcp_server.py",
+        "bytes":  3112,
+        "sha256":  "c55c171375f050a53196b4abd5d51e26ddbd814f6f3ba75ea305171234b10981"
+    },
+    {
+        "path":  "src/cnki_mcp/server/search_cache.py",
+        "bytes":  4689,
+        "sha256":  "6063631d47005a6386ddde6f368d41f955055328403ca4f1f949a6038c903b46"
+    },
+    {
+        "path":  "src/cnki_mcp/server/tool_registry.py",
+        "bytes":  11829,
+        "sha256":  "a71694780550ec99522bde781058c222e4fbd1a9dec8d71fe4b394a747e03bda"
+    },
+    {
+        "path":  "tests/cli/test_cli.py",
+        "bytes":  15022,
+        "sha256":  "26f38af9c0c054e7726cf07f83230333d333e20fb3c530be4b10cc5dc650b831"
+    },
+    {
+        "path":  "tests/core/parsers/test_detail_parser.py",
+        "bytes":  4283,
+        "sha256":  "39a6c4969057ca6522c132c6a4a8a7de98bb4639ea3a9dccbb2faefda0b5a595"
+    },
+    {
+        "path":  "tests/core/parsers/test_export_parser.py",
+        "bytes":  2511,
+        "sha256":  "d2fec9f9f00d0955243ef6f5c0ba058657a0e01b82e2540bbae393e1e1d12363"
+    },
+    {
+        "path":  "tests/core/parsers/test_journal_parser.py",
+        "bytes":  3845,
+        "sha256":  "97a13728ab0e84f75ae37b5e1f96c35f648d3c3f2fbd8ccccafe0c84f63accd9"
+    },
+    {
+        "path":  "tests/core/parsers/test_search_parser.py",
+        "bytes":  4189,
+        "sha256":  "7fbfb641ffc17b37c30d3f1b735789c2ea21ae8f550fabe7149a91f82c909480"
+    },
+    {
+        "path":  "tests/core/retrieval/__init__.py",
+        "bytes":  225,
+        "sha256":  "5bb928c656f03872a467b6c1d63a6e8862914b25565238fe194eda567e1e96ef"
+    },
+    {
+        "path":  "tests/core/retrieval/test_base.py",
+        "bytes":  1769,
+        "sha256":  "c24b1fae507c4c57ea2714e38c12486cbc166d4aa7083a8a404e7e6676f616d7"
+    },
+    {
+        "path":  "tests/core/retrieval/test_models.py",
+        "bytes":  3422,
+        "sha256":  "5893482c195a8eb0b8d0de5fde15c0fbab5fdf65278b5ef212f898fe6959ff39"
+    },
+    {
+        "path":  "tests/core/test_auth.py",
+        "bytes":  4604,
+        "sha256":  "52aaea7554b436b621289a226e059fc121a5bd317de5b52d6f9bba43eb7a421c"
+    },
+    {
+        "path":  "tests/core/test_browser_worker.py",
+        "bytes":  4410,
+        "sha256":  "89bebcf38c904e10e8df198660f01bc3617ac0540afc9d50533dc6a41954569e"
+    },
+    {
+        "path":  "tests/core/test_client.py",
+        "bytes":  7625,
+        "sha256":  "917c55d8a4ad300a87f6092cb39e9d0c2d7a427c0e0a69521e62cec566a88227"
+    },
+    {
+        "path":  "tests/core/test_config.py",
+        "bytes":  3694,
+        "sha256":  "7bcfe9b2bc72bef0c017958449ae28820e38032de05a65b3d6a2b3bd6326dfc3"
+    },
+    {
+        "path":  "tests/core/test_exceptions.py",
+        "bytes":  1585,
+        "sha256":  "4d17148937ea07cbdaeb4e96daf402aa3184e786542626be4980dba8b492039f"
+    },
+    {
+        "path":  "tests/core/test_models.py",
+        "bytes":  3776,
+        "sha256":  "0c71fdf5fb7b892106447efacfad862f8ab60882d18a70a52da999933442b91d"
+    },
+    {
+        "path":  "tests/core/test_ratelimit.py",
+        "bytes":  2961,
+        "sha256":  "42faa816c184f2b2a4e84925a15ccc0f98e528b205581a42c84913f2d38f4499"
+    },
+    {
+        "path":  "tests/core/test_runtime.py",
+        "bytes":  4472,
+        "sha256":  "9746d9a3da4301f5039cc27392496c58fdc76be76643535b829d458085a565f2"
+    },
+    {
+        "path":  "tests/core/tools/test_basic_search.py",
+        "bytes":  2781,
+        "sha256":  "b7b82fdf1da6f866ae18f09b7f87835be618f65384ac9e24cde01797ba10583b"
+    },
+    {
+        "path":  "tests/core/tools/test_export.py",
+        "bytes":  4331,
+        "sha256":  "b5a14a3b5ef3a04030c11c88c28494adb006127fd40c57543e6f8354259ea1b5"
+    },
+    {
+        "path":  "tests/core/tools/test_journal.py",
+        "bytes":  8798,
+        "sha256":  "c79911da899e1a188efe4cd1c2c34882d0395bf0092c3436e23456b0c86ce9f2"
+    },
+    {
+        "path":  "tests/core/tools/test_metadata.py",
+        "bytes":  2239,
+        "sha256":  "b8662af1a0673773029c02f78c446397438fecad9a58f7178d46c086fb899052"
+    },
+    {
+        "path":  "tests/core/tools/test_metadata_lookup.py",
+        "bytes":  10266,
+        "sha256":  "aef0d9304d73e3970bbfedb9578d13b4f59c1cb757c695c7e8d6c202a3f9bfca"
+    },
+    {
+        "path":  "tests/core/tools/test_professional_search.py",
+        "bytes":  15804,
+        "sha256":  "fae4ed8581d3f5155598b665a803b81d69f669c584ca0095b097d42da8582fe1"
+    },
+    {
+        "path":  "tests/core/tools/test_search.py",
+        "bytes":  6618,
+        "sha256":  "9c9a7fb57c69eb58038553a4e0fa87e6009bc2f920a842618b374c9095d050a0"
+    },
+    {
+        "path":  "tests/server/test_cnki_mcp_server.py",
+        "bytes":  8861,
+        "sha256":  "514a3c4840c36502b2c76a83cc312ab2636de7a6fa515319cdd8079cab62d5e3"
+    },
+    {
+        "path":  "tests/server/test_search_cache.py",
+        "bytes":  2904,
+        "sha256":  "6ae9cc3723e24ca1285d5d4ca5e35733a61feafadcd33d1c023379589ba89cdf"
+    },
+    {
+        "path":  "tests/server/test_tool_registry.py",
+        "bytes":  14691,
+        "sha256":  "0d51a91c1ceee6afce9e200cd8b98265d170267539052beb11186e09f7f27f07"
+    },
+    {
+        "path":  "tests/test_package.py",
+        "bytes":  1175,
+        "sha256":  "fcf49077f21c39e1e80cd92d1061977d5260857c1a22174ba85a3b96b87df62b"
+    },
+    {
+        "path":  "tests/test_publish_workflow.py",
+        "bytes":  660,
+        "sha256":  "a71db1663008c79d0f12bc873b17a429a2761ec380f90af2ca8278bcc833bfa7"
+    }
+]
