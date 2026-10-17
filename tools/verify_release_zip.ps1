@@ -1,4 +1,4 @@
-# Verify a released ZIP as an end user would receive it.
+﻿# Verify a released ZIP as an end user would receive it.
 #
 #   powershell -NoProfile -ExecutionPolicy Bypass -File tools\verify_release_zip.ps1 [-Zip <path>] [-Json]
 #
@@ -75,8 +75,20 @@ else { $root = $extractRoot }
 Add-Result 'Z2.extracted' 'PASS' "extracted to $root"
 
 # --- 3. expected entry points ----------------------------------------------
+# Developer-only records (PROJECT_STATE.md, PORTABLE_*_REPORT.md, TEST_RESULTS.md and
+# docs/provenance/audit-v1.0.md) are deliberately NOT part of a public release: they
+# quote the build host's absolute paths and institution. They are absent from this
+# list on purpose -- their absence is correct behaviour, not a defect.
+#
+# Keep this list ASCII-only. Windows PowerShell 5.1 decodes .ps1 files using the
+# system code page unless they carry a UTF-8 BOM, so non-ASCII literals silently
+# turn into mojibake here. The Chinese-named docs are therefore counted by
+# wildcard instead of being spelled out.
 $required = @(
-    'START_HERE.md', 'INSTALL_PROMPT.md', 'VERSION', 'manifest.json', 'PROJECT_STATE.md',
+    'README.md', 'README_EN.md', 'START_HERE.md', 'INSTALL_PROMPT.md', 'DEPLOYMENT_README.md',
+    'VERSION', 'manifest.json', 'LICENSE', 'THIRD-PARTY-NOTICES.md', 'CHANGELOG.md',
+    'docs\provenance\README.md',
+    'docs\provenance\v1.0-bundle.sha256.json', 'docs\provenance\upstream-src.sha256.json',
     'bundle\cnki-research\package.json',
     'bundle\cnki-research\cordis.patch.yml',
     'bundle\cnki-research\launcher\cnki_research_launcher.py',
@@ -85,11 +97,14 @@ $required = @(
     'tools\package_release.ps1', 'tools\verify_release_zip.ps1', 'tools\probe_mcp_stdio.py',
     'tests\run_all.ps1', 'tests\test_static_package.mjs', 'tests\test_tool_schema.mjs',
     'tests\test_dsh_isolated.ps1',
-    'upstream\cnki-mcp\pyproject.toml', 'upstream\cnki-mcp\uv.lock', 'upstream\cnki-mcp\LICENSE',
-    'LICENSE', 'THIRD-PARTY-NOTICES.md', 'CHANGELOG.md'
+    'upstream\cnki-mcp\pyproject.toml', 'upstream\cnki-mcp\uv.lock', 'upstream\cnki-mcp\LICENSE'
 )
 $missing = @($required | Where-Object { -not (Test-Path -LiteralPath (Join-Path $root $_) -PathType Leaf) })
-if ($missing.Count -eq 0) { Add-Result 'Z3.entryPoints' 'PASS' "all $($required.Count) required entry point(s) present after extraction" }
+# docs/01..06 ship with Chinese file names; assert the count rather than the bytes.
+$docsDir = Join-Path $root 'docs'
+$docsMd = @(Get-ChildItem -LiteralPath $docsDir -Filter '*.md' -File -ErrorAction SilentlyContinue)
+if ($docsMd.Count -lt 6) { $missing += "docs\*.md (expected >= 6, found $($docsMd.Count))" }
+if ($missing.Count -eq 0) { Add-Result 'Z3.entryPoints' 'PASS' "all $($required.Count) required entry point(s) present after extraction, plus $($docsMd.Count) docs page(s)" }
 else { Add-Result 'Z3.entryPoints' 'FAIL' "missing after extraction: $($missing -join ', ')" }
 
 # --- 4. no development leftovers -------------------------------------------

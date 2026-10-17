@@ -6,7 +6,7 @@
 
 ## 一、普通用户怎么用（3 步）
 
-1. **解压**：把 `CNKI-Research-Portable-1.0.0.zip` 解压到任意目录。
+1. **解压**：把 `CNKI-Research-Portable-1.0.0-rc.2.zip` 解压到任意目录。
    路径可以包含空格和中文，例如 `D:\我的工具\CNKI Research`。
    解压后请确认能看到 `START_HERE.md`、`bundle\`、`tools\` 这几项。
 

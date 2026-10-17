@@ -4,11 +4,20 @@
 
 [简体中文](README.md) | [English](README_EN.md)
 
-> **Status: `v1.0.0-rc.1` — Release Candidate (pre-release).**
+> **Status: `v1.0.0-rc.2` — Release Candidate (pre-release).**
 > Every automated test that can be run safely on a single machine passes. **Real model requests,
 > real institutional searches and second-machine acceptance have NOT been performed** and are
 > marked `NOT TESTED`; they are not counted as passes. Do not treat this as a verified
 > production release.
+
+**Version identity** (four levels, deliberately not forced to be equal)
+
+| Level | Value | Meaning |
+|---|---|---|
+| Distribution | `1.0.0-rc.2` | Version of this repository and its release assets; pre-release |
+| Core bundle | `@local/dsh-cnki-research@1.0.0` | The installed plugin; **frozen baseline version, code unchanged** |
+| Upstream | `cnki-mcp 0.1.1` | Vendored source version, matches the baseline |
+| Release grade | Release Candidate | Not a Verified Release |
 
 ---
 
@@ -151,11 +160,11 @@ by the preset alone.
 **Prerequisites**: Windows 10/11 x64, a working DSH Desktop installation, internet access for the
 first install, and **your own lawful CNKI access**.
 
-1. **Download the release** — from the Releases page, take `CNKI-Research-Portable-1.0.0.zip` and
-   `CNKI-Research-Portable-1.0.0.zip.sha256` from the same version.
+1. **Download the release** — from the Releases page, take `CNKI-Research-Portable-1.0.0-rc.2.zip` and
+   `CNKI-Research-Portable-1.0.0-rc.2.zip.sha256` from the same version.
 2. **Verify the hash**
    ```powershell
-   Get-FileHash .\CNKI-Research-Portable-1.0.0.zip -Algorithm SHA256
+   Get-FileHash .\CNKI-Research-Portable-1.0.0-rc.2.zip -Algorithm SHA256
    ```
    Compare character by character with the `.sha256` file. If it differs, **stop**.
 3. **Extract to a stable directory** — e.g. `D:\Tools\CNKI-Research-Portable`. Spaces and CJK

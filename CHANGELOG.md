@@ -1,5 +1,56 @@
 # Changelog
 
+## 1.0.0-rc.2 — 公开发布准备修订
+
+本修订**不改变任何安装或运行行为**：`bundle/`（Preset、启动器、Skill）、`upstream/`（内置上游源码）
+与安装/卸载/回滚的实现（`tools/portable.ps1`、`tools/lib/PortableCommon.ps1`）相对 `1.0.0-rc.1`
+**逐字节未变**。`tools/verify_release_zip.ps1` 有改动，但只改了**发版校验脚本的期望文件清单**，
+使其匹配公开发行的新结构（移除开发者报告、补入 README/DEPLOYMENT_README/docs），不涉及安装逻辑。
+其余改动集中在公开发布所必需的**隐私清理、许可证与文档**层面。
+
+### 隐私与安全
+
+* **移除源码中的真实开发者身份**：`tests/test_static_package.mjs` 原先用
+  `['Zhang', 'Yijia'].join('')` 把真实账号名拆成两段再拼回——这在程序上避免了自匹配，
+  但在阅读上毫无遮蔽作用。现改为**可配置检测标记**，默认值为虚构占位符；
+  真实值只能由维护者通过 `CNKI_ACCOUNT_MARKER` / `CNKI_INSTITUTION_MARKERS` 在本地注入，
+  **不进入版本库**。检测能力不变（已用注入法验证仍能正确报错）。
+* **移除源码中的真实机构名**：同一文件的机构检测目标不再内联真实机构，改为同一套可配置标记。
+* **开发机文档移出公开发行**：`PROJECT_STATE.md`、`PORTABLE_{BUILD,RELEASE,SECURITY,TEST}_REPORT.md`、
+  `TEST_RESULTS.md` 与 `docs/provenance/audit-v1.0.md` 含构建机绝对路径、机构名与机器布局，
+  已移入非公开审计归档，**不再进入公开仓库，也不再进入发行 ZIP**。
+* **行尾策略固定**：新增 `.gitattributes`（`* text=auto eol=lf`）。Windows Git 默认
+  `core.autocrlf=true`，会在检出时改写行尾，从而让 `manifest.json` 里每一个哈希失效；
+  固定行尾后克隆结果逐字节可复现。
+* **强制纳入 `uv.lock`**：内置上游的 `.gitignore` 会忽略 `uv.lock`，若照做则克隆后无法安装。
+  已用 `git add -f` 纳入，并在 `.gitignore` 中写明原因与复核命令。
+
+### 修复
+
+* `THIRD-PARTY-NOTICES.md` §5 原称发行包"不含任何机构名"，与当时载荷中的文档不符；
+  现改为按**可执行载荷**（`bundle/**`、`tools/**`、`upstream/**`）精确限定，并说明文档层的情况。
+* `START_HERE.md` 的"最短路径"原先给出不带 `-AllowProductionProfile` 的 `-Action install`，
+  而安装器对真实 `desktop` Profile 会以 `REFUSED:` 拒绝——已补全该参数并说明替代做法。
+* `INSTALL_PROMPT.md`、`README.md` 中的压缩包名与实际产物大小写/名称不一致，已统一。
+* 测试报告中"最新完整运行"与若干文件计数为过时数值，已按实际证据更正。
+
+### 文档
+
+* `README.md` 重写为 GitHub 项目首页，新增 `README_EN.md`（英文）；`DEPLOYMENT_README.md`
+  改为用户部署与三步验收指南；原 README 的技术章节整理为 `docs/06-设计取舍.md`。
+* `docs/05-测试报告.md` 如实区分"原始 RC1 运行结果"与"RC2 上的静态复跑结果"，
+  并说明 `NOT TESTED` 项未变。
+* 补入上游 `docs/api.md`，修复内置上游 README 的断链，并让上游文档保持完整。
+
+### 版本标识
+
+* 发行版本：`1.0.0-rc.2`（`VERSION`、`manifest.json.distribution.version`、压缩包文件名）
+* 核心 Bundle：`@local/dsh-cnki-research@1.0.0` —— **保持冻结基线版本不变**，
+  因为其代码未改动，也不应为了对齐标签而修改稳定核心。
+* 上游：`cnki-mcp 0.1.1` —— 保持不变。
+
+---
+
 ## 1.0.0 — CNKI Research Portable（首个通用发行版）
 
 从冻结的 `@local/dsh-cnki-research@1.0.0` 生产插件派生的、可跨电脑重复部署的发行版。

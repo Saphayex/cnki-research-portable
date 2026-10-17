@@ -4,9 +4,18 @@
 
 [简体中文](README.md) | [English](README_EN.md)
 
-> **当前状态：`v1.0.0-rc.1` — Release Candidate（预发行）。**
+> **当前状态：`v1.0.0-rc.2` — Release Candidate（预发行）。**
 > 允许在单机上安全完成的自动化测试已全部通过；**真实模型请求、真实机构检索与第二台电脑验收尚未执行**，
 > 一律标注为 `NOT TESTED`，不计为通过。请不要把它当作已验证的生产发行版。
+
+**版本标识**（四个层次，刻意不强行统一）
+
+| 层次 | 值 | 说明 |
+|---|---|---|
+| 发行版本 | `1.0.0-rc.2` | 本仓库与发行资产的版本；预发行 |
+| 核心 Bundle | `@local/dsh-cnki-research@1.0.0` | 被安装的插件本体；**冻结基线版本，代码未改动** |
+| 上游 | `cnki-mcp 0.1.1` | 内置源码版本，与基线一致 |
+| 发行等级 | Release Candidate | 未达到 Verified Release |
 
 ---
 
@@ -138,11 +147,11 @@ CNKI Research 会话检索到的题录是结构化数据，可以直接交给其
 以及**你自己合法的知网访问权限**。
 
 1. **下载 Release**
-   从 Releases 页面获取同一版本的 `CNKI-Research-Portable-1.0.0.zip` 与
-   `CNKI-Research-Portable-1.0.0.zip.sha256`。
+   从 Releases 页面获取同一版本的 `CNKI-Research-Portable-1.0.0-rc.2.zip` 与
+   `CNKI-Research-Portable-1.0.0-rc.2.zip.sha256`。
 2. **校验哈希**
    ```powershell
-   Get-FileHash .\CNKI-Research-Portable-1.0.0.zip -Algorithm SHA256
+   Get-FileHash .\CNKI-Research-Portable-1.0.0-rc.2.zip -Algorithm SHA256
    ```
    与 `.sha256` 文件中的值逐字符比对。不一致就**停止**，不要安装。
 3. **解压到稳定目录**

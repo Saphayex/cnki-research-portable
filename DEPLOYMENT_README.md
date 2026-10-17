@@ -3,7 +3,7 @@
 > **面向对象：** 第一次在另一台 Windows 电脑上安装 CNKI Research Portable 的用户。  
 > **发行状态：** Release Candidate（RC），尚未完成跨电脑正式验收。  
 > **使用方式：** 用户负责准备文件、向 DSH 发送提示词、审阅授权及完成机构登录；环境检查、安装与诊断由 DSH 执行。  
-> **适用包：** `CNKI-Research-Portable-1.0.0.zip`
+> **适用包：** `CNKI-Research-Portable-1.0.0-rc.2.zip`
 
 [简体中文](DEPLOYMENT_README.md) | [English summary](README_EN.md) | [回到项目首页](README.md)
 
@@ -26,8 +26,8 @@
 - 电脑可以联网，并且你有合法的知网机构或个人访问权限。
 - 最好使用**没有安装过 CNKI Research 的电脑**。如果电脑已有重要 DSH 会话和项目，请先自行备份。
 - 从原电脑复制**同一次构建**的两个文件：
-  - `CNKI-Research-Portable-1.0.0.zip`
-  - `CNKI-Research-Portable-1.0.0.zip.sha256`
+  - `CNKI-Research-Portable-1.0.0-rc.2.zip`
+  - `CNKI-Research-Portable-1.0.0-rc.2.zip.sha256`
 
 将 ZIP 解压到一个**长期保留、不准备删除的文件夹**，例如：
 

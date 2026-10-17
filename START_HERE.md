@@ -63,7 +63,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File tools\portable.ps1 -Action i
 ## 目录结构
 
 ```
-CNKI-Research-Portable-1.0.0/
+CNKI-Research-Portable-1.0.0-rc.2/
 ├── START_HERE.md              <- 你在这里
 ├── DEPLOYMENT_README.md       <- 用户部署与三步验收指南
 ├── INSTALL_PROMPT.md          <- 粘贴给 DSH 的提示词

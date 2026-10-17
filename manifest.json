@@ -3,7 +3,7 @@
   "distribution": {
     "name": "cnki-research-portable",
     "title": "CNKI Research Portable",
-    "version": "1.0.0",
+    "version": "1.0.0-rc.2",
     "license": "GPL-3.0-only",
     "platform": [
       "windows-x64"
@@ -171,13 +171,13 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 10177,
-      "sha256": "bf18c3a80fad1bc32058cd6034deabc182c358a8facd3ce4b158084780cae1f0"
+      "bytes": 13772,
+      "sha256": "2ed769733c1e3381eefd25b7c10cb038979c44806d3c24a0b42a8c742ea46e23"
     },
     {
       "path": "DEPLOYMENT_README.md",
-      "bytes": 12389,
-      "sha256": "4efd71509d8cc07820a528d015775c0e88bd5b17709ce5f335b6e695e3319287"
+      "bytes": 12404,
+      "sha256": "8d8d396d0f8d9bab9f3bc2e61bb744e4fa87d9bc2ba439a612137bb72a73a1b1"
     },
     {
       "path": "docs/01-架构与路径契约.md",
@@ -201,18 +201,18 @@
     },
     {
       "path": "docs/05-测试报告.md",
-      "bytes": 5528,
-      "sha256": "3d1003d8bfe0a510c4e3cbc1361731dd4ef15479b776dffade8a5327b7e923b2"
+      "bytes": 5954,
+      "sha256": "9aab7ad16bba3edb315376fc860941f25db92f23a400c77283beedcf2c3a92b2"
     },
     {
       "path": "docs/06-设计取舍.md",
-      "bytes": 8403,
-      "sha256": "267d3e6dac78be261eaf6c49ea034020e37182e3c66037936dd1b09304f91589"
+      "bytes": 8406,
+      "sha256": "3b3cae1a155342c2c600b82e6107654b5d65736af4895bd51e1c0fd7c74edab1"
     },
     {
       "path": "docs/provenance/README.md",
-      "bytes": 2467,
-      "sha256": "2861f0beb2ac0a283c9d2c0c4dfb88d6dce1accc053153c608b426eb22d5b91e"
+      "bytes": 2719,
+      "sha256": "5b93690bca8d874f1db1c4364977406dee5b3e36ec079c555281531a88804c5a"
     },
     {
       "path": "docs/provenance/upstream-src.sha256.json",
@@ -226,8 +226,8 @@
     },
     {
       "path": "INSTALL_PROMPT.md",
-      "bytes": 8536,
-      "sha256": "2a18c8f7cf3cb5e1db7423897abbcbdc50f6a24864926a32b444f94bee2508c4"
+      "bytes": 8541,
+      "sha256": "d689762902819bb205e320314ca4b4711900b1992f1b32d8c549cf4a55804aab"
     },
     {
       "path": "LICENSE",
@@ -236,18 +236,18 @@
     },
     {
       "path": "README_EN.md",
-      "bytes": 17010,
-      "sha256": "f23b9f74e77e5b1bbaf5f82203bfa02aaee17284be530a493e6bc6058e61b78b"
+      "bytes": 17500,
+      "sha256": "b3923acc4c2b35f9ef4a5ab101cf888c84f56e1b0686b24e87b34ae5df7abf5c"
     },
     {
       "path": "README.md",
-      "bytes": 16175,
-      "sha256": "9b21fe273cb8aecb846ae3aba050607cde556887201ca66d893825e19256fc86"
+      "bytes": 16629,
+      "sha256": "f1f67e156573c0e066b8a0a393ecbbc9195ee6389e313e866a72876ec494f8e3"
     },
     {
       "path": "START_HERE.md",
-      "bytes": 4666,
-      "sha256": "aa5f809e104adb8f373d4bbdfc0b230cbb57d82904791b6df34b9bd3ec8a2c1c"
+      "bytes": 4671,
+      "sha256": "a13d4fccca6950863f39731d802e669463e61f60e7f31724a8d64ef581962810"
     },
     {
       "path": "tests/run_all.ps1",
@@ -321,8 +321,8 @@
     },
     {
       "path": "tools/verify_release_zip.ps1",
-      "bytes": 12066,
-      "sha256": "35a8d0e041051373afe985717b93c7f7d24aa742dbc9f4f7640ade86a204b8c4"
+      "bytes": 13178,
+      "sha256": "9baa78beda3ca8444d7156af8c1051041f3e57f8c1a09eb647e25234f96ff635"
     },
     {
       "path": "upstream/cnki-mcp/.gitignore",
@@ -671,8 +671,8 @@
     },
     {
       "path": "VERSION",
-      "bytes": 6,
-      "sha256": "59854984853104df5c353e2f681a15fc7924742f9a2e468c29af248dce45ce03"
+      "bytes": 11,
+      "sha256": "0c654c00f94741d78169de333d4d9e866be0667b41f9c54cafe3c6b700b15a43"
     }
   ]
 }
