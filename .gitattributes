@@ -1,0 +1,18 @@
+# ---------------------------------------------------------------------------
+# Line-ending policy
+# ---------------------------------------------------------------------------
+# This repository is hash-verified: manifest.json records a SHA-256 for every
+# payload file, and tests/test_static_package.mjs fails when any byte differs.
+# A checkout that rewrites line endings therefore breaks the integrity check.
+#
+# Windows Git commonly sets core.autocrlf=true, which would convert LF to CRLF
+# on checkout and invalidate every recorded hash. Pinning `eol=lf` here makes the
+# checkout byte-identical on every platform, regardless of the user's autocrlf.
+* text=auto eol=lf
+
+# Never convert these.
+*.zip   binary
+*.png   binary
+*.jpg   binary
+*.ico   binary
+*.pyc   binary

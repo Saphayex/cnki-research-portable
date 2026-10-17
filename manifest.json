@@ -216,13 +216,13 @@
     },
     {
       "path": "docs/provenance/upstream-src.sha256.json",
-      "bytes": 11477,
-      "sha256": "2867bfd925558a2af41ce89ba416c96088b47d9a76be1a9fbbc783609d67a8e1"
+      "bytes": 11161,
+      "sha256": "bf10f357570bcb98d6cf02aecce5a883707966de24d49ebb001265bde6c0c74f"
     },
     {
       "path": "docs/provenance/v1.0-bundle.sha256.json",
-      "bytes": 859,
-      "sha256": "114dd8404514cfae5313b4758fcb826f061047f325b61d6c0b7f73156dd357ff"
+      "bytes": 833,
+      "sha256": "c9e174f62647bc990993b182f4761bc018d3c2b766810ad1b0b5403bad01a631"
     },
     {
       "path": "INSTALL_PROMPT.md",
