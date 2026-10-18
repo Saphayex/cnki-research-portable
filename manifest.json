@@ -3,11 +3,13 @@
   "distribution": {
     "name": "cnki-research-portable",
     "title": "CNKI Research Portable",
-    "version": "1.0.0-rc.2",
+    "version": "1.0.0-rc.3",
     "license": "GPL-3.0-only",
     "platform": [
       "windows-x64"
-    ]
+    ],
+    "variant": "unified-installer",
+    "candidate": true
   },
   "bundle": {
     "name": "@local/dsh-cnki-research",
@@ -118,6 +120,23 @@
     "dshDesktopVerified": [
       "0.2.0-rc.2"
     ],
+    "dshDesktopStaticVerified": [
+      "0.2.1-rc.2"
+    ],
+    "productionBundleLiveVerified": [
+      "0.2.1-rc.2"
+    ],
+    "promptVariables": {
+      "dshRegistered": [
+        "provider",
+        "model"
+      ],
+      "removedByDsh": {
+        "0.2.1-rc.2": [
+          "cwd"
+        ]
+      }
+    },
     "electronVerified": [
       "44.0.0"
     ],
@@ -131,12 +150,26 @@
   },
   "install": {
     "entryPoint": "tools/portable.ps1",
+    "setupEntryPoint": "tools/setup.ps1",
     "dryRun": "tools/portable.ps1 -Action check",
     "defaultProfile": "desktop",
     "installSpec": "link:<absolute path to bundle/cnki-research>",
     "officialInstallPath": "dsh plugin --profile <profile> add <spec>",
     "restartRequired": false,
     "pathIndependence": "no absolute path is stored in bundle/cnki-research/cordis.patch.yml"
+  },
+  "upgrade": {
+    "schemaVersion": 2,
+    "data": "upgrade-data/rc2-to-rc3.json",
+    "upgradeId": "cnki-portable-1.0.0-rc.2-to-1.0.0-rc.3-unified",
+    "engine": "tools/lib/UpgradeCommon.ps1",
+    "setup": "tools/setup.ps1",
+    "sourceVersion": "1.0.0-rc.2",
+    "targetVersion": "1.0.0-rc.3",
+    "allowedSourceStates": [
+      "RC2_CLEAN",
+      "RC2_HOTFIXED"
+    ]
   },
   "files": [
     {
@@ -145,9 +178,59 @@
       "sha256": "6e8ddd211645a168699e553d98882b4ce627b8e3de5038dcb9a5558ede71f4f0"
     },
     {
+      "path": "CHANGELOG.md",
+      "bytes": 25220,
+      "sha256": "4487884316fb3982ac76c0ac88d94c09cc330c5b8c2f635d7d0e4d0ac09aa8c5"
+    },
+    {
+      "path": "DEPLOYMENT_README.md",
+      "bytes": 19650,
+      "sha256": "5a3830e1357d806bb6187c2fe99165b7a36bb82b359b382c07eee15d895c59e1"
+    },
+    {
+      "path": "INSTALL_PROMPT.md",
+      "bytes": 13588,
+      "sha256": "ed20e999a3ca888cfb0fd1eb5293cccab19e81503831cf47db17cdb48a2d3458"
+    },
+    {
+      "path": "LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    {
+      "path": "README.md",
+      "bytes": 34309,
+      "sha256": "d74366ee3df69cd76c783bff88f30b2d69b913e12c157941faae9daaa41fabb3"
+    },
+    {
+      "path": "README_EN.md",
+      "bytes": 36859,
+      "sha256": "69cb939d6ce39932ca07892f158badc14308a44c0145f6e79272b7c8a816253c"
+    },
+    {
+      "path": "START_HERE.md",
+      "bytes": 13472,
+      "sha256": "6a6a8a77bf15f28f61d5536c7a8336e8bb252549d56816386b6e511a051a6f76"
+    },
+    {
+      "path": "THIRD-PARTY-NOTICES.md",
+      "bytes": 6152,
+      "sha256": "5ae72a74fef0d12c43c56f7c828df10cbf9d767e7fd8a203909b38bf63f1a37d"
+    },
+    {
+      "path": "VERSION",
+      "bytes": 11,
+      "sha256": "d458c8db8288a8a159c5b25dbea651430713bd1417c213dd83048058fe5fe228"
+    },
+    {
+      "path": "bundle/cnki-research/README.md",
+      "bytes": 5425,
+      "sha256": "a7089b7fe060ec4946e804c664001e9f82b8d10029ccef3aff66b5df2fda1579"
+    },
+    {
       "path": "bundle/cnki-research/cordis.patch.yml",
-      "bytes": 16762,
-      "sha256": "afa6ffdd0684fe0440a5e3d2414c08fe36be946e64c19648c48b3770f68bf343"
+      "bytes": 16705,
+      "sha256": "edda8817e0bf449d8324f4875b1c7acd37a8dc693c3a82d044f4a5c436421778"
     },
     {
       "path": "bundle/cnki-research/launcher/cnki_research_launcher.py",
@@ -160,49 +243,34 @@
       "sha256": "733795392b04e344f46433c04358c3a9fad7be8a71042949166dba05617c0769"
     },
     {
-      "path": "bundle/cnki-research/README.md",
-      "bytes": 5425,
-      "sha256": "a7089b7fe060ec4946e804c664001e9f82b8d10029ccef3aff66b5df2fda1579"
-    },
-    {
       "path": "bundle/cnki-research/skills/cnki-literature-search/SKILL.md",
       "bytes": 6951,
       "sha256": "9ee6c890eeffeeb74c6e208cc67deadda3b9c522438910a26836fdf0bda8c9fc"
     },
     {
-      "path": "CHANGELOG.md",
-      "bytes": 13772,
-      "sha256": "2ed769733c1e3381eefd25b7c10cb038979c44806d3c24a0b42a8c742ea46e23"
-    },
-    {
-      "path": "DEPLOYMENT_README.md",
-      "bytes": 12404,
-      "sha256": "8d8d396d0f8d9bab9f3bc2e61bb744e4fa87d9bc2ba439a612137bb72a73a1b1"
-    },
-    {
       "path": "docs/01-架构与路径契约.md",
-      "bytes": 8537,
-      "sha256": "c69e0ad62b94fbb58f9789278f846e57c0d392ce3d80e04e4ffec9a132e02669"
+      "bytes": 17242,
+      "sha256": "feb2a1d371d7d820e92d0056a99e6cd5227b85051e2cb15c2501ca2b194fde35"
     },
     {
       "path": "docs/02-安装卸载与回滚.md",
-      "bytes": 13868,
-      "sha256": "c47df6e5992b75cd7f1e7e53ebd9f98d1f3fed4b58eb1ca10569563559b5a14c"
+      "bytes": 15757,
+      "sha256": "d682c34b66e5df78fea6823419c6d97bab813746794b74f002c9f837388cf131"
     },
     {
       "path": "docs/03-兼容性矩阵.md",
-      "bytes": 5250,
-      "sha256": "2f858eb6f389d75bc10d719d5c25d3382b59fb42b66c44c5d4bb0514434d0d23"
+      "bytes": 10607,
+      "sha256": "ddd90509760b46ed33f4d09ed5b092bcf9202e1f8a82d4ebb7ebfae785a71a54"
     },
     {
       "path": "docs/04-升级与版本维护.md",
-      "bytes": 6982,
-      "sha256": "9e9a4dc44b4a763ad203ea2fc74fbf057ae3c060a33d36a72076766fe3e52177"
+      "bytes": 25208,
+      "sha256": "22fca194626d5174f528692cfaa19122e7a07b1bf56e3cf55f7e4c50d00c547c"
     },
     {
       "path": "docs/05-测试报告.md",
-      "bytes": 5954,
-      "sha256": "9aab7ad16bba3edb315376fc860941f25db92f23a400c77283beedcf2c3a92b2"
+      "bytes": 12877,
+      "sha256": "00d7152d88f5c045db3f94fb86cc01de67bf6f3a1c76b2d8b3085447e7423611"
     },
     {
       "path": "docs/06-设计取舍.md",
@@ -211,8 +279,8 @@
     },
     {
       "path": "docs/provenance/README.md",
-      "bytes": 2719,
-      "sha256": "5b93690bca8d874f1db1c4364977406dee5b3e36ec079c555281531a88804c5a"
+      "bytes": 3345,
+      "sha256": "4656367a673b13a1eb448dc351c75e7b44808f9a4ef4d5bc07c2b36528ac98d7"
     },
     {
       "path": "docs/provenance/upstream-src.sha256.json",
@@ -225,34 +293,29 @@
       "sha256": "c9e174f62647bc990993b182f4761bc018d3c2b766810ad1b0b5403bad01a631"
     },
     {
-      "path": "INSTALL_PROMPT.md",
-      "bytes": 8541,
-      "sha256": "d689762902819bb205e320314ca4b4711900b1992f1b32d8c549cf4a55804aab"
+      "path": "tests/Test-UnifiedMatrix.ps1",
+      "bytes": 248159,
+      "sha256": "db115ca6876671f702d085e820edf5067ae3a00b566a8e5c100f55923165e981"
     },
     {
-      "path": "LICENSE",
-      "bytes": 35149,
-      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+      "path": "tests/Test-UnifiedVerification.ps1",
+      "bytes": 169242,
+      "sha256": "8810bd3916bc73c8037d34858b7332a26d7d4fb55e69d95b9f5557177e65f08e"
     },
     {
-      "path": "README_EN.md",
-      "bytes": 17500,
-      "sha256": "b3923acc4c2b35f9ef4a5ab101cf888c84f56e1b0686b24e87b34ae5df7abf5c"
+      "path": "tests/lib/UnifiedAssert.ps1",
+      "bytes": 157546,
+      "sha256": "2d880990ba1a1eb53448f0a2f1ebcaa8241bc1f66528f2e66d40cbb8534e4dc6"
     },
     {
-      "path": "README.md",
-      "bytes": 16629,
-      "sha256": "f1f67e156573c0e066b8a0a393ecbbc9195ee6389e313e866a72876ec494f8e3"
-    },
-    {
-      "path": "START_HERE.md",
-      "bytes": 4671,
-      "sha256": "a13d4fccca6950863f39731d802e669463e61f60e7f31724a8d64ef581962810"
+      "path": "tests/lib/UnifiedFixtures.ps1",
+      "bytes": 53250,
+      "sha256": "5bfd3c21fadfcc2a03033a7de75e49dab3ed26f5049913f653900fa36b9dc334"
     },
     {
       "path": "tests/run_all.ps1",
-      "bytes": 16666,
-      "sha256": "9cd570120e39f02fdeddad093add68a67046d4c7f233a7f7e877e88cf7ca6727"
+      "bytes": 19310,
+      "sha256": "b9b33f4bc846ae9b941cc5aa2193ee727d5414855c3591037d152aed0f14d692"
     },
     {
       "path": "tests/test_dsh_isolated.ps1",
@@ -266,8 +329,8 @@
     },
     {
       "path": "tests/test_static_package.mjs",
-      "bytes": 26460,
-      "sha256": "6ef57160a481f654c3d80424f89ba3865ad6f4db1ab9b92d8fd30ca2ee62c30f"
+      "bytes": 27568,
+      "sha256": "7cf79174b3df5aeac76b7161c868bf5f9b55555a137ddd83c13721a8f7ba3c7a"
     },
     {
       "path": "tests/test_tool_schema.mjs",
@@ -275,19 +338,24 @@
       "sha256": "002c427ab767c7f51720b53ce695abfa0bd4d5960720797fd790d19b5a690a31"
     },
     {
-      "path": "THIRD-PARTY-NOTICES.md",
-      "bytes": 6152,
-      "sha256": "5ae72a74fef0d12c43c56f7c828df10cbf9d767e7fd8a203909b38bf63f1a37d"
+      "path": "tests/test_unified_package.mjs",
+      "bytes": 37187,
+      "sha256": "c1f65f19964e52f0e0dbd658aea8a391dd37a860d948643d347fd148cc0f728e"
     },
     {
       "path": "tools/build_manifest.mjs",
-      "bytes": 7785,
-      "sha256": "2d6726924c59db3884e0adbb44782ecdef2f6f99371829c5c3fd741fca855e3c"
+      "bytes": 10892,
+      "sha256": "5aa42219474dfff263da9f5a6f17df5ab74a80a8ca6d257658bdee5c775b5c5c"
     },
     {
       "path": "tools/build_release_manifest.mjs",
-      "bytes": 5330,
-      "sha256": "19fc8fb2c49f1ebe4ed7d810d9230a293f7649b0463ae1a2a54bba0b5540c34c"
+      "bytes": 1743,
+      "sha256": "d8da7c8b538a5c0f22b5de2290c8509439c8061082f6b9105299cf15b41e48e9"
+    },
+    {
+      "path": "tools/build_unified_release.ps1",
+      "bytes": 169369,
+      "sha256": "0c232e5ed1f44cfcc6e935aef72a94b3ab91e620d61422e9079b4d687d543b42"
     },
     {
       "path": "tools/lib/PortableCommon.ps1",
@@ -295,9 +363,14 @@
       "sha256": "fdc75607b2dbac5a0d569f4339e2191483214ce6f9f700bfcfb9eb730883c430"
     },
     {
+      "path": "tools/lib/UpgradeCommon.ps1",
+      "bytes": 316163,
+      "sha256": "6b407dc45554469a0f842880ba10a9c5e5bacbdca18c3dbfd1fcc81dd7fc8897"
+    },
+    {
       "path": "tools/package_release.ps1",
-      "bytes": 4563,
-      "sha256": "adac2113747ed3b73cf75c3d95cd0af662c90d90b96e95dc76cf6e5dea8c51f7"
+      "bytes": 2493,
+      "sha256": "1319d64f9853a745b8aa56a3c08053cba170cec1374d0222b945de376a27f65d"
     },
     {
       "path": "tools/portable.ps1",
@@ -310,9 +383,9 @@
       "sha256": "41ba3d7cf06427d313c1db242f1252a8c0bb2770fc3e6b536f170fb8e7f89bce"
     },
     {
-      "path": "tools/vendor/js-yaml/js-yaml.mjs",
-      "bytes": 104118,
-      "sha256": "cea276c7e15f409a1adbe5d177aba7824398a474f7cf702bd57962c7d570636f"
+      "path": "tools/setup.ps1",
+      "bytes": 146949,
+      "sha256": "5062cc8a5becaebb1d4df641edf79a5f9ae1a2447015517378fcd05ae4c8251b"
     },
     {
       "path": "tools/vendor/js-yaml/LICENSE",
@@ -320,9 +393,14 @@
       "sha256": "a07bc24468b9654ce76a547d47a2db282d07733b715db4c73a98bd63961f9550"
     },
     {
+      "path": "tools/vendor/js-yaml/js-yaml.mjs",
+      "bytes": 104118,
+      "sha256": "cea276c7e15f409a1adbe5d177aba7824398a474f7cf702bd57962c7d570636f"
+    },
+    {
       "path": "tools/verify_release_zip.ps1",
-      "bytes": 13178,
-      "sha256": "9baa78beda3ca8444d7156af8c1051041f3e57f8c1a09eb647e25234f96ff635"
+      "bytes": 74126,
+      "sha256": "04edf86b3d7cab09ee6d4cd795188dfbcde751463485eb2863cfbc22b912755f"
     },
     {
       "path": "upstream/cnki-mcp/.gitignore",
@@ -330,24 +408,24 @@
       "sha256": "52e1d4910117e43bf269b3326f7d6b387a9d085ba5003726de4e56487b7d973d"
     },
     {
-      "path": "upstream/cnki-mcp/docs/api.md",
-      "bytes": 8109,
-      "sha256": "0a3d033bf0fb928461a46409a72af5fc2c08b2405c9d59b4adeadf9b7dc3d854"
-    },
-    {
       "path": "upstream/cnki-mcp/LICENSE",
       "bytes": 35149,
       "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
     },
     {
-      "path": "upstream/cnki-mcp/pyproject.toml",
-      "bytes": 869,
-      "sha256": "be12b9a3a19eb9363fbb5b9bf1e4c8ccd50d25247c5724a910db9969c7586ebd"
-    },
-    {
       "path": "upstream/cnki-mcp/README.md",
       "bytes": 2355,
       "sha256": "74e7328abd4b8c939ae11324dc83bef352a12575d7ed1215aa95e84d1754c47a"
+    },
+    {
+      "path": "upstream/cnki-mcp/docs/api.md",
+      "bytes": 8109,
+      "sha256": "0a3d033bf0fb928461a46409a72af5fc2c08b2405c9d59b4adeadf9b7dc3d854"
+    },
+    {
+      "path": "upstream/cnki-mcp/pyproject.toml",
+      "bytes": 869,
+      "sha256": "be12b9a3a19eb9363fbb5b9bf1e4c8ccd50d25247c5724a910db9969c7586ebd"
     },
     {
       "path": "upstream/cnki-mcp/src/cnki_mcp/__init__.py",
@@ -475,14 +553,14 @@
       "sha256": "8c8c3947ee0b06a99f7cd5f314f2ee76174e333cee75e04bfa2067ec8e027452"
     },
     {
-      "path": "upstream/cnki-mcp/src/cnki_mcp/core/tools/metadata_lookup.py",
-      "bytes": 9008,
-      "sha256": "6a0f771bf0dce36ddef2cfe09b5630c4ac1831798043a2d075d22e0a5d6ac8c7"
-    },
-    {
       "path": "upstream/cnki-mcp/src/cnki_mcp/core/tools/metadata.py",
       "bytes": 3042,
       "sha256": "b8fed3ce28f9152cb0d2dae3932bf10bb3b24e6c3359346471dc3952a9692971"
+    },
+    {
+      "path": "upstream/cnki-mcp/src/cnki_mcp/core/tools/metadata_lookup.py",
+      "bytes": 9008,
+      "sha256": "6a0f771bf0dce36ddef2cfe09b5630c4ac1831798043a2d075d22e0a5d6ac8c7"
     },
     {
       "path": "upstream/cnki-mcp/src/cnki_mcp/core/tools/no-download-now.py",
@@ -620,14 +698,14 @@
       "sha256": "c79911da899e1a188efe4cd1c2c34882d0395bf0092c3436e23456b0c86ce9f2"
     },
     {
-      "path": "upstream/cnki-mcp/tests/core/tools/test_metadata_lookup.py",
-      "bytes": 10266,
-      "sha256": "aef0d9304d73e3970bbfedb9578d13b4f59c1cb757c695c7e8d6c202a3f9bfca"
-    },
-    {
       "path": "upstream/cnki-mcp/tests/core/tools/test_metadata.py",
       "bytes": 2239,
       "sha256": "b8662af1a0673773029c02f78c446397438fecad9a58f7178d46c086fb899052"
+    },
+    {
+      "path": "upstream/cnki-mcp/tests/core/tools/test_metadata_lookup.py",
+      "bytes": 10266,
+      "sha256": "aef0d9304d73e3970bbfedb9578d13b4f59c1cb757c695c7e8d6c202a3f9bfca"
     },
     {
       "path": "upstream/cnki-mcp/tests/core/tools/test_professional_search.py",
@@ -668,11 +746,6 @@
       "path": "upstream/cnki-mcp/uv.lock",
       "bytes": 177166,
       "sha256": "ae566cf29bff00e068c9df166aba73da7d482226840c053103ef1cb4f080c6f3"
-    },
-    {
-      "path": "VERSION",
-      "bytes": 11,
-      "sha256": "0c654c00f94741d78169de333d4d9e866be0667b41f9c54cafe3c6b700b15a43"
     }
   ]
 }

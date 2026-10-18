@@ -1,10 +1,24 @@
-# Package the CNKI Research Portable distribution into a distributable zip.
+# FAIL-CLOSED GUARD: this script no longer packages the unified RC3 release.
 #
-#   powershell -NoProfile -ExecutionPolicy Bypass -File tools\package_release.ps1 [-OutputDir <dir>] [-SkipVerify]
+# The unified RC3 candidate has a deterministic, reproducible build pipeline:
+#   tools\build_unified_release.ps1
+# which generates the deterministic ZIP (sorted entries, forward slashes, fixed
+# 1980-01-01 timestamps, no attribute bits), the in-package SHA256SUMS.txt trust root,
+# the package-only upgrade metadata (upgrade-data\) and the external release identity
+# (sidecar, release-level SHA256SUMS.txt, RELEASE_MANIFEST.json).
 #
-# The payload list comes from manifest.json, so _scratch\, dist\, .venv\,
-# node_modules\, _portable\ and __pycache__ are excluded by construction. Every
-# file is re-hashed before staging; a mismatch aborts the packaging.
+# Keeping a second packaging implementation here would be a non-deterministic second
+# source of truth (the historical implementation used Compress-Archive, which embeds
+# per-file mtimes/attributes and directory entries, so two builds never matched), and it
+# would silently drop the in-package SHA256SUMS.txt. It is therefore retained as a
+# fail-closed guard only.
+#
+# Build the unified candidate with:
+#   powershell -NoProfile -ExecutionPolicy Bypass -File tools\build_unified_release.ps1 `
+#     -Rc2Zip <frozen RC2 ZIP> -Rc3FrozenZip <frozen RC3 ZIP> `
+#     -Repo <candidate repo root> -OutDir <RELEASE_ASSETS_CANDIDATE>
+#
+# Exit code 2 = refused by design (documented, not a crash).
 
 [CmdletBinding()]
 param(
@@ -14,80 +28,22 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-. (Join-Path $PSScriptRoot 'lib\PortableCommon.ps1')
 
 $packageRoot = (Get-Item -LiteralPath (Join-Path $PSScriptRoot '..')).FullName
-$manifest = Read-JsonFile -Path (Join-Path $packageRoot 'manifest.json')
-if (-not $manifest) { throw 'manifest.json is missing; run: node tools/build_manifest.mjs' }
-$version = [string]$manifest.distribution.version
-if (-not $OutputDir) { $OutputDir = Join-Path $packageRoot 'dist' }
-$OutputDir = Get-NormalizedPath -Path $OutputDir
-New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 
-Write-Section "Packaging CNKI Research Portable $version"
-
-if (-not $SkipVerify) {
-    Write-Item -Status 'INFO' -Text "verifying $(@($manifest.files).Count) payload file(s) against manifest.json"
-    $problems = @(Test-PackageIntegrity -PackageRoot $packageRoot -Manifest $manifest)
-    if ($problems.Count -gt 0) {
-        foreach ($problem in $problems | Select-Object -First 10) { Write-Item -Status 'FAIL' -Text $problem }
-        throw "payload integrity check failed with $($problems.Count) problem(s); run: node tools/build_manifest.mjs"
-    }
-    Write-Item -Status 'PASS' -Text 'every payload file matches its recorded SHA-256'
-}
-
-# Release artefact name required by the distribution spec.
-$zipName = "CNKI-Research-Portable-$version"
-$staging = Join-Path $OutputDir ("_staging\$zipName")
-if (Test-Path -LiteralPath (Split-Path -Parent $staging)) {
-    Remove-Item -LiteralPath (Split-Path -Parent $staging) -Recurse -Force
-}
-New-Item -ItemType Directory -Force -Path $staging | Out-Null
-
-$copied = 0
-foreach ($entry in $manifest.files) {
-    $source = Join-Path $packageRoot ([string]$entry.path)
-    $destination = Join-Path $staging ([string]$entry.path)
-    $destinationDir = Split-Path -Parent $destination
-    if (-not (Test-Path -LiteralPath $destinationDir)) { New-Item -ItemType Directory -Force -Path $destinationDir | Out-Null }
-    Copy-Item -LiteralPath $source -Destination $destination -Force
-    $copied++
-}
-# manifest.json excludes itself from its own file list (it cannot record its own
-# hash), so it must be staged explicitly -- the installer and the extracted-copy
-# checks both read it from the package root.
-Copy-Item -LiteralPath (Join-Path $packageRoot 'manifest.json') -Destination (Join-Path $staging 'manifest.json') -Force
-$copied++
-Write-Item -Status 'PASS' -Text "staged $copied file(s) (payload + manifest.json)"
-
-# Refuse to ship development leftovers even if the manifest ever listed them.
-$leaks = @(Get-ChildItem -LiteralPath $staging -Recurse -Force -Directory |
-    Where-Object { $_.Name -in @('_scratch', '.venv', 'node_modules', '__pycache__', '_portable') })
-$leaks += @(Get-ChildItem -LiteralPath $staging -Recurse -Force -File -Filter '*.pyc')
-$leaks += @(Get-ChildItem -LiteralPath $staging -Recurse -Force -File -Filter '*.log')
-if ($leaks.Count -gt 0) {
-    foreach ($leak in $leaks | Select-Object -First 10) { Write-Item -Status 'FAIL' -Text $leak.FullName }
-    throw 'the staged payload contains runtime artefacts that must not ship'
-}
-Write-Item -Status 'PASS' -Text 'no .venv, node_modules, __pycache__, .pyc or test log in the staged payload'
-
-$zipPath = Join-Path $OutputDir "$zipName.zip"
-if (Test-Path -LiteralPath $zipPath) { Remove-Item -LiteralPath $zipPath -Force }
-Compress-Archive -Path (Join-Path $staging '*') -DestinationPath $zipPath -CompressionLevel Optimal
-Write-Item -Status 'PASS' -Text "created $zipPath"
-
-$hash = (Get-FileHash -LiteralPath $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
-$hashPath = "$zipPath.sha256"
-Write-TextFile -Path $hashPath -Text "$hash *$(Split-Path -Leaf $zipPath)`n"
-Write-Item -Status 'PASS' -Text "sha256 $hash"
-
-if (-not $KeepStaging) {
-    Remove-Item -LiteralPath (Split-Path -Parent $staging) -Recurse -Force
-}
-
-$sizeMb = [math]::Round((Get-Item -LiteralPath $zipPath).Length / 1MB, 2)
-Write-Section 'Release artefact'
-Write-Host "  zip     : $zipPath"
-Write-Host "  sha256  : $hashPath"
-Write-Host "  size    : $sizeMb MB"
-Write-Host "  files   : $copied"
+Write-Host 'REFUSED: tools\package_release.ps1 is a fail-closed guard in the unified RC3 tree.' -ForegroundColor Red
+Write-Host ''
+Write-Host 'The unified release archive is built ONLY by tools\build_unified_release.ps1, which owns:'
+Write-Host '  - the deterministic ZIP (sorted, forward slashes, fixed 1980 timestamps, no attr bits)'
+Write-Host '  - the in-package SHA256SUMS.txt trust root (payload + manifest.json + upgrade-data/**)'
+Write-Host '  - upgrade-data\rc2-to-rc3.json (schemaVersion 2 upgrade metadata)'
+Write-Host '  - the external release identity (sidecar, release SHA256SUMS.txt, RELEASE_MANIFEST.json)'
+Write-Host ''
+Write-Host 'Reproduction command:'
+Write-Host '  powershell -NoProfile -ExecutionPolicy Bypass -File "<repo>\tools\build_unified_release.ps1" `'
+Write-Host '    -Rc2Zip "<frozen RC2 ZIP>" -Rc3FrozenZip "<frozen RC3 ZIP>" `'
+Write-Host '    -Repo "<repo>" -OutDir "<RELEASE_ASSETS_CANDIDATE>"'
+Write-Host ''
+Write-Host "Package root inspected (not modified): $packageRoot"
+Write-Host "Requested OutputDir (ignored): $OutputDir"
+exit 2

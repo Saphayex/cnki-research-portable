@@ -1,5 +1,157 @@
 # Changelog
 
+## 1.0.0-rc.3 — 统一安装/升级包（unified installer，Pre-release）
+
+本条目描述**同一个 `1.0.0-rc.3` 发行包**在“统一安装/升级”方向上的新增能力：
+**一个 ZIP 同时支持全新安装，与已有标准 RC2（`1.0.0-rc.2`，Layout A）安装的安全原地升级。**
+发行版本号为 `1.0.0-rc.3`，本轮已重新冻结为统一发行包，官方发行包名为
+`CNKI-Research-Portable-1.0.0-rc.3.zip`（配套 `.zip.sha256` 与发布级 `SHA256SUMS.txt`）。
+发布等级为 **Pre-release / Release Candidate**（不是 Verified Release）；Tag 迁移、push 与
+GitHub Release 发布需维护者另行批准，当前尚未发布。旧冻结 RC3 的哈希只作为**旧候选身份**
+记录，不再作为本包身份。
+
+### 新增：统一入口 `tools/setup.ps1`
+
+* 动作为 `check` / `plan` / `install` / `upgrade` / `verify` / `status` / `rollback` / `uninstall`；
+  退出码统一为 `0`（成功/无需操作）、`2`（拒绝/FAIL/状态未知）、`1`（工具内部错误）。
+* 先**只读**识别安装状态（`NOT_INSTALLED` / `RC2_CLEAN` / `RC2_HOTFIXED` /
+  `RC3_ALREADY_INSTALLED`（统一版或冻结版变体）/ `UNKNOWN_OR_MODIFIED` / Layout B 等），再路由：
+  * 全新安装 → 委托原有 `tools/portable.ps1 -Action install`（参数、生产门禁与 `-Yes` 显式映射）；
+  * RC2 → 事务化原地升级（内嵌升级引擎）；仅变化文件 + 2 个环境元数据；不需要联网；
+  * 已是 RC3 → 安全 no-op（零写入、零备份）；
+  * 未知/被修改 → fail-closed 拒绝并输出冲突清单。
+* 只读动作（`check` / `plan` / `status` / `verify`）不写安装根、不写 Profile；统一 PLAN 是
+  **setup 自算的只读计划**，不调用旧安装器的 `plan`/`-DryRun`。
+
+### 新增：事务化原地升级引擎（`tools/lib/UpgradeCommon.ps1`）
+
+* 由本项目已独立测试的 **Upgrader V1**（GPL-3.0-only 同项目）适配而来的派生作品：
+  保留事务状态机（`PRECHECKED → BACKED_UP → STAGED → APPLYING → APPLIED → VERIFIED → COMMITTED`）、
+  planId 门、逐文件备份与 staging 校验、原子替换、版本标记最后写、写后全量 VERIFY、
+  失败自动恢复、`FAILED_MANUAL` 人工恢复指引、回滚冲突检测与逐字节回滚。
+* 适配点：包布局解耦（`PackageRoot` 就是目标发行树，无 `payload/` 副本）、计数由包内元数据驱动、
+  目标身份由包内完整性链证明；**新增文件（`operation: add`）** 支持——备份记录“升级前不存在”、
+  APPLY 创建父目录并原子写入、回滚/自动恢复仅在“当前字节 == 已应用目标哈希”时删除新增文件
+  （用户修改过的文件 → 冲突拒绝，绝不错删）。
+* 升级只写“变化的发行载荷 + `manifest.json` + 2 个环境元数据文件”；`.venv`、Playwright、
+  Profile junction、DSH 会话/存储/凭据、CNKI 登录态、用户文件均为**只读保留**。
+
+### 新增：升级元数据与包内完整性链
+
+* `upgrade-data/rc2-to-rc3.json`（schemaVersion 2）：只含哈希与规则（源/目标版本、RC2 来源锚、
+  115 个目标载荷哈希、变化清单、2 个 hotfix 字节变体、2 个环境文件规则、回滚元数据、
+  校验与禁止路径），**不含任何目标文件副本**。
+* `SHA256SUMS.txt`：包内完整性清单，覆盖除自身外的全部包内文件（载荷 + `manifest.json` +
+  `upgrade-data/**`）；发布级 `SHA256SUMS.txt` 与 `<zip>.sha256` 是外部锚。
+* 包结构（metadata-split）：**115 个发行载荷**（冻结 RC3 的 107 个 + 8 个统一新增文件：
+  `tools/setup.ps1`、`tools/lib/UpgradeCommon.ps1`、`tools/build_unified_release.ps1`、
+  `tests/Test-UnifiedMatrix.ps1`、`tests/lib/UnifiedFixtures.ps1`、`tests/lib/UnifiedAssert.ps1`、
+  `tests/Test-UnifiedVerification.ps1`、`tests/test_unified_package.mjs`）+ 包内发布元数据。
+  安装/升级**不会**把 `SHA256SUMS.txt`、`upgrade-data/**` 复制进安装根；
+  升级完成后安装根只含 115 个载荷 + `manifest.json` + 安装器运行期目录。
+* `manifest.json` 仍是 `schemaVersion 1`（兼容既有静态测试），只做**加法**：
+  `distribution.variant` / `distribution.candidate`、`install.setupEntryPoint = tools/setup.ps1`、
+  新增 `upgrade` 元数据块；`install.entryPoint` 保持 `tools/portable.ps1`。
+
+### 新增：构建、校验与测试工具
+
+* `tools/build_unified_release.ps1`：确定性统一构建（输入冻结 RC2 ZIP + 冻结 RC3 核心等价性
+  oracle + 候选仓库；输出 `upgrade-data/rc2-to-rc3.json`、`manifest.json`、`SHA256SUMS.txt`、
+  确定性 ZIP 与外部身份资产；两次干净构建字节一致）。
+* `tools/build_manifest.mjs` 适配统一包布局（排除包内发布元数据、稳定排序）；
+  `tools/package_release.ps1` / `tools/build_release_manifest.mjs` 变为 fail-closed 守卫，
+  指向统一构建器；`tools/verify_release_zip.ps1` 适配新的归档校验项（Z1–Z9）。
+* 测试：`tests/Test-UnifiedMatrix.ps1`（升级/回滚/故障注入/未知状态/用户数据保护 A–K 组）、
+  `tests/Test-UnifiedVerification.ps1`（全新安装、安装器回归、包完整性、MCP、归档）、
+  `tests/lib/UnifiedFixtures.ps1`、`tests/lib/UnifiedAssert.ps1`、`tests/test_unified_package.mjs`。
+
+### LEGACY 保持与已知限制
+
+* `tools/portable.ps1` 与 `tools/lib/PortableCommon.ps1` 相对已冻结 RC3 **逐字节未变**，
+  旧命令与旧语义（含 `-Action upgrade` = 重装覆盖）保持不变；新语义只存在于
+  `setup.ps1 -Action upgrade`，不存在“同名命令静默改变风险语义”的情况。
+* `portable.ps1 -Action upgrade` 明确标注为 **LEGACY**：不是安全增量升级路径。
+* `portable.ps1 -Action plan` / `-DryRun` 为 **LEGACY 已知限制**：实现上会创建一份 Profile 备份
+  目录，不是完全只读；只读计划请用 `setup.ps1 -Action plan`。
+
+### 文档
+
+* `README.md` / `README_EN.md` / `START_HERE.md` / `INSTALL_PROMPT.md` / `DEPLOYMENT_README.md`
+  增加“统一入口、全新安装、RC2 安全升级、已是 RC3 无需操作、未知状态拒绝、LEGACY 区分、
+  DSH Standard/Creator 使用原则、包结构与发布身份”说明。
+* `docs/01/03/04/05` 同步更新：统一包布局与升级路径契约、兼容性边界（含升级能力边界）、
+  升级与维护流程、测试范围与结果口径。
+* 内部材料（审计、规格、证据、构建/验证工作目录、内部报告）**不进入发行包**；
+  发行包只包含发行载荷与包内发布元数据。
+
+### 隐私修复（公开发布前）
+
+* 公开发布前终检发现：rc.2 起即随包发布的 `CHANGELOG.md` 说明文字、以及本候选新增的
+  `tools/build_unified_release.ps1` / `tools/verify_release_zip.ps1` 的检测标记清单，仍把真实
+  Windows 账号名拆成两段内联，拼接即可还原。该身份自 `1.0.0-rc.2` 起已存在于公开 Git 历史，
+  在不重写历史的前提下无法移除。
+* 本次修复已把该身份从**全部随包源码**中移除：`CHANGELOG.md` 不再引用原值；两个脚本的
+  `$script:DevPathMarkers` 不再内联账号名，改为**仅运行期注入** `CNKI_ACCOUNT_MARKER`
+  （与 `tests/test_static_package.mjs` 同一约定）；未设置该变量时只执行通用开发路径扫描，
+  不需要任何真实身份即可工作。
+* 检测能力不变并已做正/负控制复核：注入标记出现在载荷中仍会命中并报错，未设置或载荷干净时
+  通过；随包源码中不再存在该身份的明文、拆分、编码或哈希形式。
+
+### 测试状态与边界（不夸大）
+
+* 本候选必须重新执行统一矩阵与归档验证；**任何未执行项一律 `NOT TESTED`，不用旧 RC3 结果代替**。
+* 兼容性边界不变：Portable 实机只有历史 `0.2.0-rc.2`；`0.2.1-rc.2` 仅静态 + 隔离协议；
+  Portable 在 `0.2.1-rc.2` 上的独立实机会话仍为 `NOT TESTED`。
+* **`DSH_RUNTIME_ACTIVATION_VERIFIED` 恒为 `NOT TESTED`**：文件级升级完成不等于运行期激活
+  （真实会话、模型请求、工具可见性）已验证。
+* 升级路径不改变核心 Bundle 与上游源码（仍逐字节等于冻结 RC3），因此 Bundle 版本保持
+  `1.0.0`、上游保持 `cnki-mcp 0.1.1`。
+
+---
+
+## 1.0.0-rc.3 — DSH 0.2.1-rc.2 兼容性修复（已冻结 RC3 候选，历史条目）
+
+本修订只做一件事：修复 DSH Desktop `0.2.1-rc.2` 移除隐式 `{{cwd}}` 提示词变量后，
+`CNKI Research` 会话在首次模型请求前的 Prompt Assembly 阶段失败的问题
+（缺陷编号 `CNKI-021-001`）。核心 CNKI MCP、上游源码、Launcher 与安装目录规则均未改变。
+
+### 修复（唯一 P0 变更）
+
+* `bundle/cnki-research/cordis.patch.yml` 的 persona 配置**删除一行**：
+
+  ```yaml
+  suffix: Your working directory is {{cwd}}.
+  ```
+
+  DSH `0.2.1-rc.2` 的 `@deepseek-ai/dsh-agent-loop` 只注册 `provider` 与 `model`
+  两个提示词变量（`0.2.0-rc.2` 还注册 `cwd`），严格插值遇到未注册的 `{{cwd}}`
+  会抛错，导致首个模型请求前 Prompt Assembly 失败。
+* 保留 `prefix: You are a coding agent powered by the {{model}} model.`；
+  该变量在 `0.2.0-rc.2` 与 `0.2.1-rc.2` 中均已注册。
+* 其余 Plugin Rows、MCP Launcher、8 个 CNKI 工具定义与安装目录规则**逐字节不变**。
+
+### 测试
+
+* 新增静态回归断言 `A7.promptVariables`：Preset persona 文本只允许引用 DSH 已注册的
+  提示词变量（`provider` / `model`）；`{{cwd}}` 一旦回归立即 FAIL。
+* 静态套件由 18 项变为 19 项；本轮重新执行，结果见 `docs/05-测试报告.md`。
+* **兼容性声明边界**：本机**生产 Bundle** 已在 DSH `0.2.1-rc.2` 上通过真实验收
+  （真实模型请求、Prompt Assembly、8 个 MCP 工具注册、Provider 接受原始 Schema、
+  MCP 连接与资源调用、`mcp__cnki__login` 复用既有 Profile、真实 `easy-search` 检索）。
+  该结果证明修复逻辑有效，但**不是 Portable RC3 的实机验收**：Portable RC3 自身的独立
+  安装与实机会话验收仍为 `NOT TESTED`，因此 `0.2.1-rc.2` 只记入
+  “静态 / 隔离协议验证”，不进入 Portable 的 verified list。
+
+### 版本标识
+
+* 发行版本：`1.0.0-rc.3`（`VERSION`、`manifest.json.distribution.version`、压缩包文件名）
+* 核心 Bundle：`@local/dsh-cnki-research@1.0.0` —— 保持冻结版本不变：本次是 Preset
+  声明中的一行兼容修复，对外暴露的工具名称、Schema 与功能未变，按 `docs/04` 的版本约定
+  不递增插件版本。
+* 上游：`cnki-mcp 0.1.1` —— 保持不变。
+
+---
+
 ## 1.0.0-rc.2 — 公开发布准备修订
 
 本修订**不改变任何安装或运行行为**：`bundle/`（Preset、启动器、Skill）、`upstream/`（内置上游源码）
@@ -10,11 +162,16 @@
 
 ### 隐私与安全
 
-* **移除源码中的真实开发者身份**：`tests/test_static_package.mjs` 原先用
-  `['Zhang', 'Yijia'].join('')` 把真实账号名拆成两段再拼回——这在程序上避免了自匹配，
-  但在阅读上毫无遮蔽作用。现改为**可配置检测标记**，默认值为虚构占位符；
-  真实值只能由维护者通过 `CNKI_ACCOUNT_MARKER` / `CNKI_INSTITUTION_MARKERS` 在本地注入，
-  **不进入版本库**。检测能力不变（已用注入法验证仍能正确报错）。
+* **移除源码中的真实开发者身份（rc.2 引入可配置标记；rc.3 公开发布前补全）**：更早的
+  版本曾把真实 Windows 账号名拆成两段（形如两段字符串相加或 `join('')`）内联在检测器的
+  标记清单里，以规避自匹配——这在程序上有效，但在阅读上毫无遮蔽作用。本次 rc.2 修订把
+  `tests/test_static_package.mjs` 的检测目标改为**可配置标记**，默认为虚构占位符；真实值
+  只能由维护者通过 `CNKI_ACCOUNT_MARKER` / `CNKI_INSTITUTION_MARKERS` 在本地运行期注入，
+  **不进入版本库**。但该修订仍有遗漏：本段说明文字自身、以及 rc.3 新增的构建/校验脚本的
+  检测清单仍内联了拆分形式，在 rc.3 公开发布前已一并清除——随包源码中不再保留该身份的
+  明文、拆分、编码或哈希形式，未注入时通用扫描仍可独立工作，注入时检测能力不变。
+  **残余风险**：该身份自 `1.0.0-rc.2` 起已随公开 Git 历史发布，在不重写历史的前提下无法
+  移除；本轮修复只保证当前树与后续发行包不再包含它。
 * **移除源码中的真实机构名**：同一文件的机构检测目标不再内联真实机构，改为同一套可配置标记。
 * **开发机文档移出公开发行**：`PROJECT_STATE.md`、`PORTABLE_{BUILD,RELEASE,SECURITY,TEST}_REPORT.md`、
   `TEST_RESULTS.md` 与 `docs/provenance/audit-v1.0.md` 含构建机绝对路径、机构名与机器布局，

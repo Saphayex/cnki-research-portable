@@ -343,6 +343,22 @@ if (patch) {
   }
   if (structural.length === 0) pass('A7.structure', 'preset id/order, MCP row, skill rows and the absence of v1.1 runtime rows all check out');
   else fail('A7.structure', structural.join('; '));
+
+  // CNKI-021-001 regression: persona text may only reference prompt variables that
+  // DSH registers. DSH 0.2.1-rc.2 removed the implicit `cwd` variable (0.2.0-rc.2
+  // registered provider/model/cwd); a dangling {{cwd}} throws during prompt assembly
+  // before the first model request, so the whole session cannot start.
+  const personaRow = presetRow?.config?.plugins?.find((row) => row.id === 'persona');
+  const personaText = JSON.stringify(personaRow?.config ?? {});
+  const registeredPromptVariables = new Set(['provider', 'model']);
+  const referenced = [...personaText.matchAll(/\{\{([a-z][a-z0-9_]*)\}\}/g)].map((match) => match[1]);
+  const unregistered = referenced.filter((name) => !registeredPromptVariables.has(name));
+  if (unregistered.length === 0) {
+    const used = [...new Set(referenced)].sort().join(', ') || '(none)';
+    pass('A7.promptVariables', `persona references only DSH-registered prompt variables: ${used}`);
+  } else {
+    fail('A7.promptVariables', `persona references prompt variable(s) not registered by DSH 0.2.1-rc.2: ${[...new Set(unregistered)].join(', ')}`);
+  }
 }
 
 // Evaluation against a simulated installation whose root contains a space and CJK.

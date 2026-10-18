@@ -1,19 +1,30 @@
 # CNKI Research Portable 1.0 — 部署与首次验收 README
 
-> **面向对象：** 第一次在另一台 Windows 电脑上安装 CNKI Research Portable 的用户。  
-> **发行状态：** Release Candidate（RC），尚未完成跨电脑正式验收。  
-> **使用方式：** 用户负责准备文件、向 DSH 发送提示词、审阅授权及完成机构登录；环境检查、安装与诊断由 DSH 执行。  
-> **适用包：** `CNKI-Research-Portable-1.0.0-rc.2.zip`
+> **面向对象：** 第一次在另一台 Windows 电脑上安装 CNKI Research Portable 的用户，以及已有
+> `1.0.0-rc.2` 标准安装、需要安全原地升级的用户。  
+> **发行状态：** Pre-release（Release Candidate，非 Verified Release）；本轮是**统一安装/升级包**
+> （unified installer），已重新冻结为 `1.0.0-rc.3` 统一发行包，但**尚未发布**（Tag/push/Release 待维护者单独批准）。  
+> **使用方式：** 用户负责准备文件、向 DSH 发送提示词、审阅授权及完成机构登录；环境检查、安装与诊断由 DSH 执行；
+> **RC2 安全升级由用户在 DSH 正常退出后、于独立 PowerShell 窗口执行**。  
+> **适用包：** `CNKI-Research-Portable-1.0.0-rc.3.zip`（官方发行名）
 
 [简体中文](DEPLOYMENT_README.md) | [English summary](README_EN.md) | [回到项目首页](README.md)
 
-本指南只有三个步骤：
+本指南的主线是**全新安装**的三步：
 
 1. **在 DSH 创造模式中安装 Portable**
 2. **确认 CNKI Research 已正常集成**
 3. **完成知网认证并测试真实检索**
 
-**无需手动执行 PowerShell 命令，也无需自行配置 Python、MCP、YAML 或插件。**
+已有 RC2 安装的用户请先完成第 1–3 步中的环境确认，再按本文末尾的
+**「升级已有 RC2 安装」**执行；升级的 PLAN/APPLY 不需要 DSH 参与。
+
+**全新安装无需手动执行 PowerShell 命令，也无需自行配置 Python、MCP、YAML 或插件。**
+
+> **RC3 兼容性说明：** 本包修复了 DSH Desktop `0.2.1-rc.2` 移除 `{{cwd}}` 提示词变量导致的
+> CNKI Research 会话启动失败（删除 Preset persona 中已失效的 suffix，保留 `{{model}}` prefix）。
+> 该修复已通过静态与隔离协议验证；**本 Portable 包在 `0.2.1-rc.2` 上的实机安装与会话运行
+> 尚未由本发行版独立验收（`LIVE NOT TESTED`）**，请按下方三步完成实测并如实记录。
 
 ---
 
@@ -22,18 +33,27 @@
 请确认：
 
 - 测试电脑使用 **Windows 10/11 x64**，已安装并可正常使用 DSH Desktop。
-- 当前发行包在 DSH `0.2.0-rc.2` 上有测试记录；使用其他版本时需以实际验收结果为准。
+- 本 Portable 发行版的实机测试记录来自 DSH `0.2.0-rc.2`；RC3 针对 `0.2.1-rc.2` 的兼容性
+  修复已通过静态与隔离协议验证，但**尚未在 `0.2.1-rc.2` 上完成独立的实机会话验收**。
+  使用其他版本时需以实际验收结果为准。
 - 电脑可以联网，并且你有合法的知网机构或个人访问权限。
 - 最好使用**没有安装过 CNKI Research 的电脑**。如果电脑已有重要 DSH 会话和项目，请先自行备份。
 - 从原电脑复制**同一次构建**的两个文件：
-  - `CNKI-Research-Portable-1.0.0-rc.2.zip`
-  - `CNKI-Research-Portable-1.0.0-rc.2.zip.sha256`
+  - `CNKI-Research-Portable-1.0.0-rc.3.zip`
+  - `CNKI-Research-Portable-1.0.0-rc.3.zip.sha256`
 
 将 ZIP 解压到一个**长期保留、不准备删除的文件夹**，例如：
 
 `D:\Tools\CNKI-Research-Portable`
 
 > 不建议解压到稍后会清空的临时目录。Portable 的 Python 环境可能引用安装时的绝对路径。ZIP 完整性校验由后面的 DSH Creator 执行，你不必手动输入校验命令。如果校验失败，立即停止安装。
+>
+> **必须解压到空目录/新目录。** **绝对不要**把本 ZIP 解压覆盖到已有的旧安装目录上：
+> 那会形成混合状态，统一入口的 `tools\setup.ps1 -Action check` 会拒绝（exit 2），
+> 并且本发行版不会尝试自动修复这种目录。
+
+如果你要**升级已有的 RC2 安装**，本 ZIP 只是“升级源”，不要解压进旧安装根；
+旧安装根保持原样，升级动作见本文最后一节。
 
 ---
 
@@ -254,6 +274,70 @@ limit = 3
 
 ---
 
+## 升级已有 RC2 安装（安全原地升级，独立 PowerShell）
+
+**适用**：本机已经用 `1.0.0-rc.2` **原地安装**（解压目录即安装根，Layout A），
+并且你想保留现有 DSH 会话、Profile junction、venv、Chromium 与 CNKI 登录态。
+
+**准备**：把本发行 ZIP 解压到一个**新的空目录**（作为“升级源”的 PackageRoot）；
+**不要**解压覆盖旧安装目录，也不要把升级源解压进旧安装根。
+
+**DSH 模式原则**：安全升级只做**文件级**写入、不调用插件管理器，因此只需要一个普通
+PowerShell 窗口（在 DSH Standard 会话里执行命令也可以）。**只有全新安装、卸载、安装器回滚
+才需要 Creator/Plugin Manager 场景**；升级的 APPLY 必须在 DSH **正常退出后**执行，
+所以不要把 APPLY 交给正在运行的 Creator 会话。
+
+### 升级步骤
+
+```powershell
+# 0) 确认：旧 RC2 安装根保持原样；统一发行 ZIP 解压在一个全新的空目录
+
+# 1) 只读检查（DSH 运行中也可执行；不会写任何文件）
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\setup.ps1 -Action check -InstallRoot "<RC2 安装根目录>"
+#    期望：RC2_CLEAN 或 RC2_HOTFIXED；若是 UNKNOWN_OR_MODIFIED 会列出冲突，停止并先恢复干净安装
+
+# 2) 只读 PLAN（DSH 运行中也可执行）：记录输出的 planId
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\setup.ps1 -Action plan -InstallRoot "<RC2 安装根目录>"
+#    期望：PLAN_READY；显示将替换的文件、将新增的文件、备份位置与环境文件更新
+
+# 3) 正常退出 DSH（等它完全关闭；不要强杀进程，不要手工改 Profile）
+
+# 4) 在独立 PowerShell 窗口执行 APPLY（必须带 -PlanId 与 -Yes）
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\setup.ps1 -Action upgrade -InstallRoot "<RC2 安装根目录>" -PlanId "<planId>" -Yes
+#    期望 exit 0；输出事务 id 与 COMMITTED 阶段
+
+# 5) 正常重新打开 DSH → 新建 CNKI Research 会话，按步骤 2 的方式确认 8 个工具；
+#    文件级完成状态：
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\setup.ps1 -Action verify -InstallRoot "<RC2 安装根目录>"
+#    期望 FILE_UPGRADE_COMPLETE = PASS；DSH_RUNTIME_ACTIVATION_VERIFIED 恒为 NOT TESTED
+
+# 6) 如需退回 RC2（逐字节回滚，含删除本次新增的文件）：
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\setup.ps1 -Action rollback -InstallRoot "<RC2 安装根目录>" -Yes
+```
+
+### 升级验收要点
+
+- [ ] 第 1 步状态是 `RC2_CLEAN` 或 `RC2_HOTFIXED`（不是未知/被修改）。
+- [ ] 第 2 步 exit 0，且你能读懂变更清单与备份位置；planId 已记录。
+- [ ] APPLY 前 DSH 已**正常退出**；APPLY exit 0（`2` 表示被拒绝，需按提示处理）。
+- [ ] `verify` 输出 `FILE_UPGRADE_COMPLETE = PASS`。
+- [ ] 重新打开 DSH 后 CNKI Research 预设存在，8 个工具可用。
+- [ ] 你的 DSH 会话、工作区、其他插件、CNKI 登录态未被清空。
+- [ ] 升级前备份/升级事务目录仍在（保留以备回滚，不要手工删除）。
+- [ ] 运行期激活（真实会话、模型请求、工具可见性）由你人工确认；
+      `DSH_RUNTIME_ACTIVATION_VERIFIED` 保持 `NOT TESTED`，本 README 不预写 PASS。
+
+### 升级边界
+
+* 只支持 **Layout A**；`-InstallRoot` 指向别处的独立运行根（Layout B）会被拒绝，需人工迁移。
+* 内容未知/被修改/混合时**拒绝写入**并列出冲突文件；不会自动修复。
+* 状态变化会让旧 planId 失效，必须重新 PLAN。
+* DSH 运行中 APPLY 会被拒绝（`DSH_IN_USE`）；工具绝不强杀 DSH。
+* 升级**不需要联网**、不重装 venv、不重跑插件管理器、不重建 junction。
+* **不要**用 `tools\portable.ps1 -Action upgrade` 做升级：它是 LEGACY 重装覆盖，不是安全增量路径。
+
+---
+
 ## 遇到问题时，用户应怎么做？
 
 | 遇到的情况 | 你应该做的事 |
@@ -266,6 +350,11 @@ limit = 3
 | 浏览器没打开 | 让当前会话报告真实错误，不要删浏览器 Profile |
 | 学校认证失败 | 核对学校登录流程和网络，不要让模型假设成功 |
 | 检索没有结果或报错 | 保留真实工具输出，不要让模型编造论文 |
+| 升级提示 `LAYOUT_SEPARATE_PACKAGE_ROOT` | 该安装根是独立运行根（Layout B），增量升级不支持；按 `docs/04` 的人工迁移步骤处理，不要反复重试 |
+| 升级提示 `UNKNOWN_OR_MODIFIED` / 冲突清单 | 安装内容被修改或混合，升级器拒绝写入；先恢复干净的 RC2 安装，或改用全新安装。不要手工编辑安装根/Profile 试图“修好” |
+| 升级提示 `DSH_IN_USE` | DSH 还在运行：正常退出后，在独立 PowerShell 中重新 check/plan/upgrade |
+| 升级提示 planId 相关错误（`PLAN_STALE` / `PLAN_ID_REQUIRED`） | 重新执行 `plan` 获取新的 planId，再用新 id 执行 APPLY |
+| 升级后 DSH 打不开或工具异常 | `setup.ps1 -Action verify` / `status` 先诊断；不要删备份或事务目录；需要时执行 `rollback` 回到 RC2 |
 | DSH 会话、工作区、登录态异常 | **立即停止验收**，不要继续安装、清理或重试 |
 
 ---
@@ -279,13 +368,17 @@ limit = 3
 | 步骤 1：Creator 安装与诊断 | PASS / FAIL / NOT TESTED / BLOCKED |
 | 步骤 2：Preset、8 工具、真实模型请求、工具隔离 | PASS / FAIL / NOT TESTED / BLOCKED |
 | 步骤 3：机构登录与真实知网检索 | PASS / FAIL / NOT TESTED / BLOCKED |
+| （如有升级）RC2 状态检测与 PLAN | `RC2_CLEAN` / `RC2_HOTFIXED` / UNKNOWN；planId；PASS / FAIL |
+| （如有升级）APPLY 事务与 VERIFY | 事务 id；`FILE_UPGRADE_COMPLETE`；PASS / FAIL / NOT TESTED |
+| （如有升级）升级后运行期验收 | PASS / FAIL / NOT TESTED（本包不预写 PASS） |
 | 目标电脑系统与 DSH 版本 | 按实际填写 |
 | 发行包 SHA-256 | 按实际文件填写 |
 | 安装和运行日志 | 记录保存位置 |
 | 实际检索题录 | 至少保留可以核对的返回记录 |
 | 有无非预期用户数据变更 | 如实填写 |
 
-**三个步骤全部通过**，意味着在这台测试电脑上，Portable 已经完成**首次安装 → DSH 集成 → 真实知网检索**的核心链路验收。
+**三个步骤全部通过**，意味着在这台测试电脑上，Portable 已经完成**首次安装 → DSH 集成 → 真实知网检索**的核心链路验收；
+如果还执行了 RC2 升级，则另需记录升级链路（CHECK → PLAN → APPLY → VERIFY → 重新打开 DSH）的实际结果。
 
 但要将发行等级从 RC 提升为完整的 **Verified Release**，还需要单独进行目标电脑的**卸载、回滚以及会话/登录数据保留验收**。本 README 不指导用户直接开展那些可能修改安装状态的操作。
 
@@ -296,7 +389,10 @@ limit = 3
 - 不要清理 `.dsh` 的会话、存储、凭据或 Profile。
 - 不要删除 `.cnki-mcp` 登录数据。
 - 不要为解决问题而随意使用 `-Force`、`-PurgeRuntime`。
+- **不要**把新 ZIP 解压覆盖到旧安装目录；新包必须解压到空目录。
+- 升级必须**正常退出 DSH** 后执行，不要强杀进程；工具不会替你关闭/重启 DSH。
+- 升级的备份/事务目录（`_portable\upgrades\`、`_portable\backups\`）是回滚依据，**不要手工删除**。
 - 不要允许 DSH 擅自重启、关闭或重置生产环境。
 - **用户负责授权，DSH 负责执行技术步骤。**
 
-> 发行包自带的 `INSTALL_PROMPT.md` 是安装器操作的正式依据。本 README 只说明**用户如何操作和判断结果**，不替代安装器自身的参数、权限和安全检查。
+> 发行包自带的 `INSTALL_PROMPT.md` 是安装/升级操作的正式依据。本 README 只说明**用户如何操作和判断结果**，不替代安装器自身的参数、权限和安全检查。

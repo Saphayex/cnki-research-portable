@@ -1,13 +1,21 @@
-# One-shot automated test suite for CNKI Research Portable.
+# One-shot automated test suite for CNKI Research Portable (unified installer/upgrade candidate).
 #
 #   powershell -NoProfile -ExecutionPolicy Bypass -File tests\run_all.ps1 [-SkipDsh] [-EnableRealSearch]
 #
 # Groups:
-#   A  static package validation          (no runtime needed)
-#   B  stdio MCP protocol + launcher      (needs <InstallRoot>\.venv)
-#   C  model-facing tool JSON Schema      (needs <InstallRoot>\.venv)
+#   A  static package validation + payload-manifest currency   (no runtime needed)
+#   B  stdio MCP protocol + launcher                            (needs <InstallRoot>\.venv)
+#   C  model-facing tool JSON Schema                            (needs <InstallRoot>\.venv)
 #   D  DSH installation in an isolated profile and DSH_HOME
-#   E  real CNKI search                   (needs an authenticated institution; opt-in)
+#   E  real CNKI search                                         (needs an authenticated institution; opt-in)
+#
+# This suite covers the historical installer/runtime surface. The unified package adds two
+# separate entry points that must also be run for a release candidate:
+#   tests\Test-UnifiedMatrix.ps1       - RC2 -> unified upgrade, rollback, fault injection,
+#                                        unknown-state rejection, user-data protection
+#   tests\Test-UnifiedVerification.ps1 - fresh install, installer regression, package closure,
+#                                        MCP protocol, archive verification
+# They are separate because they need the frozen RC2 ZIP and the built candidate ZIP.
 #
 # Every group that cannot run in this environment is reported as NOT TESTED; the
 # script never reports a skipped group as a pass. Exit code 0 = no FAIL.
@@ -59,10 +67,16 @@ if (-not (Test-Path -LiteralPath $launcher -PathType Leaf)) {
     $launcher = Join-Path $layout.BundleSource 'launcher\cnki_research_launcher.py'
 }
 
+# PortableCommon.ps1 sets Set-StrictMode -Version 2.0 in this script's scope. Some variables
+# are assigned only inside optional groups (B/C); initialise them so a skipped group cannot
+# abort the whole suite before the D-group restore step.
+$realUserProfile = $null
+$mcpReport = $null
+
 Write-Section "CNKI Research Portable - automated tests"
 Write-Host "  package root : $($layout.PackageRoot)"
 Write-Host "  install root : $($layout.InstallRoot)"
-Write-Host "  interpreter  : $(if ($venvPython) { $venvPython } else { '<none: run tools\portable.ps1 -Action install>' })"
+Write-Host "  interpreter  : $(if ($venvPython) { $venvPython } else { '<none: run tools\setup.ps1 -Action install (or the legacy tools\portable.ps1 -Action install)>' })"
 Write-Host "  evidence     : $ReportDir"
 
 # ---------------------------------------------------------------------------
@@ -84,12 +98,37 @@ if ($staticJson) {
     Add-Group 'A.staticPackage' 'FAIL' "the static test produced no report (exit $staticExit)" $staticReport
 }
 
+# The unified candidate adds package-only release metadata (SHA256SUMS.txt / upgrade-data). The
+# payload manifest must stay current with the working tree; `build_manifest.mjs --check` is the
+# fast, runtime-free way to prove that. In a frozen RC3 extraction the check also passes.
+$manifestCheckExit = -1
+$manifestCheckTail = ''
+$manifestCheckOut = Invoke-Native {
+    & node (Join-Path $layout.PackageRoot 'tools\build_manifest.mjs') --check 2>&1
+    $script:manifestCheckExit = $LASTEXITCODE
+}
+if ($manifestCheckOut) {
+    $manifestText = ($manifestCheckOut | Out-String).Trim()
+    if ($manifestText) { $manifestCheckTail = ($manifestText -split "`n" | Select-Object -Last 1) }
+}
+if ($manifestCheckExit -eq 0) {
+    Add-Group 'A.manifestCheck' 'PASS' 'manifest.json is current with the payload tree (node tools/build_manifest.mjs --check)' ''
+} else {
+    Add-Group 'A.manifestCheck' 'FAIL' "manifest.json is stale or unreadable (exit $manifestCheckExit): $manifestCheckTail" ''
+    Write-Item -Status 'FAIL' -Text 'manifest.json is stale; run: node tools\build_manifest.mjs'
+}
+if (Test-Path -LiteralPath (Join-Path $layout.PackageRoot 'SHA256SUMS.txt')) {
+    Add-Group 'A.unifiedPackageMetadata' 'NOT TESTED' 'unified package metadata detected; run node tests/test_unified_package.mjs and tools/verify_release_zip.ps1 -Zip <candidate.zip> for the full closure' ''
+} else {
+    Add-Group 'A.unifiedPackageMetadata' 'NOT TESTED' 'no SHA256SUMS.txt at the package root (frozen-RC3 layout); unified closure checks do not apply' ''
+}
+
 # ---------------------------------------------------------------------------
 # B - stdio MCP + launcher
 # ---------------------------------------------------------------------------
 Write-Section 'B. stdio MCP protocol'
 if (-not $venvPython) {
-    Add-Group 'B.mcpStdio' 'NOT TESTED' "no interpreter at $($layout.VenvDir); run tools\portable.ps1 -Action install" ''
+    Add-Group 'B.mcpStdio' 'NOT TESTED' "no interpreter at $($layout.VenvDir); run tools\setup.ps1 -Action install (or the legacy tools\portable.ps1 -Action install)" ''
     Write-Item -Status 'NOT TESTED' -Text 'no runtime environment; MCP group skipped'
 } elseif (-not (Test-Path -LiteralPath $launcher)) {
     Add-Group 'B.mcpStdio' 'FAIL' "launcher not found at $launcher" ''
